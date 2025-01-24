@@ -1,0 +1,69 @@
+a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Auth Page */
+.auth .brand-logo img {
+    width: 275px;
+}
+
+.field-icon {
+    float: right;
+    margin-right: 10px;
+    margin-top: -23px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Sidebar */
+.sidebar .nav .nav-item .nav-link i.menu-arrow:before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f0da";
+}
+
+.sidebar .nav .nav-item.active > .nav-link i.menu-arrow::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f0d7";
+}
+
+/* Navbar */
+.navbar .navbar-brand-wrapper .brand-logo-mini img {
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+/* Dropdowns */
+.dropdown .dropdown-toggle:after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f107";
+}
+
+/* Data Tables */
+.dataTables_wrapper .dataTable thead .sorting:after,
+.dataTables_wrapper .dataTable thead .sorting_asc:after,
+.dataTables_wrapper .dataTable thead .sorting_desc:after,
+.dataTables_wrapper .dataTable thead .sorting_asc_disabled:after,
+.dataTables_wrapper .dataTable thead .sorting_desc_disabled:after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f106";
+    right: 1.2em;
+    top: 0;
+}
+
+.dataTables_wrapper .dataTable thead .sorting:before,
+.dataTables_wrapper .dataTable thead .sorting_asc:before,
+.dataTables_wrapper .dataTable thead .sorting_desc:before,
+.dataTables_wrapper .dataTable thead .sorting_asc_disabled:before,
+.dataTables_wrapper .dataTable thead .sorting_desc_disabled:before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f107";
+    right: 1.2em;
+    bottom: 0;
+}

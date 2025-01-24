@@ -1,0 +1,182 @@
+{
+    "error_code": 0,
+    "error_desc": "",
+    "data": [
+        {
+            "id_prodi": "d778be91-7bc7-4757-bd22-9038fa8adeb4",
+            "kode_program_studi": "63101",
+            "nama_program_studi": "Ilmu Administrasi",
+            "status": "A",
+            "id_jenjang_pendidikan": "35",
+            "nama_jenjang_pendidikan": "S2"
+        },
+        {
+            "id_prodi": "8c56f8a8-8f27-4e2f-8376-a433b2862f36",
+            "kode_program_studi": "61201",
+            "nama_program_studi": "Manajemen",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "1ff84166-cc64-48aa-a38e-3c6a952a8b90",
+            "kode_program_studi": "61101",
+            "nama_program_studi": "Manajemen",
+            "status": "A",
+            "id_jenjang_pendidikan": "35",
+            "nama_jenjang_pendidikan": "S2"
+        },
+        {
+            "id_prodi": "08b181bc-1860-4c7e-8bda-ef4fbd59d869",
+            "kode_program_studi": "62201",
+            "nama_program_studi": "Akuntansi",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "5f69f4f0-ebbb-4638-8df1-4632b05326de",
+            "kode_program_studi": "84202",
+            "nama_program_studi": "Pendidikan Matematika",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "5b3ff355-1e20-4c1d-8b47-e559b6991036",
+            "kode_program_studi": "88201",
+            "nama_program_studi": "Pendidikan Bahasa dan Sastra Indonesia",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "aaf15037-cd57-4743-a5f8-fd30840f221e",
+            "kode_program_studi": "57201",
+            "nama_program_studi": "Sistem Informasi",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "e992676b-23e6-49e1-a2f6-81f90876b7da",
+            "kode_program_studi": "63201",
+            "nama_program_studi": "Ilmu Administrasi Negara",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "eca49026-745e-451c-8121-bfc81d4e9fe4",
+            "kode_program_studi": "86206",
+            "nama_program_studi": "Pendidikan Guru Sekolah Dasar",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "e0b1aad6-0be9-4647-bc08-f46754a4a1e4",
+            "kode_program_studi": "57401",
+            "nama_program_studi": "Manajemen Informatika",
+            "status": "A",
+            "id_jenjang_pendidikan": "22",
+            "nama_jenjang_pendidikan": "D3"
+        },
+        {
+            "id_prodi": "a74fffa1-43f1-4ab5-baca-dfbd08b22d20",
+            "kode_program_studi": "55202",
+            "nama_program_studi": "Teknik Informatika",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "303e6a30-c87a-4f70-8431-8ccc03b058f4",
+            "kode_program_studi": "14201",
+            "nama_program_studi": "Ilmu Keperawatan",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "b41b8150-b1e6-4c63-9455-26f91174933c",
+            "kode_program_studi": "13201",
+            "nama_program_studi": "Kesehatan Masyarakat",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3",
+            "kode_program_studi": "83203",
+            "nama_program_studi": "Pendidikan Teknik Mesin",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "019cdc1a-8cae-4c6f-a38c-9b79a082ecba",
+            "kode_program_studi": "63203",
+            "nama_program_studi": "Administrasi Publik",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "9e3b757c-b080-488d-8bbb-c8826dc7a6a6",
+            "kode_program_studi": "63101",
+            "nama_program_studi": "Administrasi Publik",
+            "status": "A",
+            "id_jenjang_pendidikan": "35",
+            "nama_jenjang_pendidikan": "S2"
+        },
+        {
+            "id_prodi": "19276abc-9bad-48db-87e5-8b1aac84bd9f",
+            "kode_program_studi": "84102",
+            "nama_program_studi": "Pendidikan Matematika",
+            "status": "A",
+            "id_jenjang_pendidikan": "35",
+            "nama_jenjang_pendidikan": "S2"
+        },
+        {
+            "id_prodi": "f48cbc83-b3c6-4e66-9e68-209b52a275e4",
+            "kode_program_studi": "86207",
+            "nama_program_studi": "Pendidikan Guru Pendidikan Anak Usia Dini",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "93366fa0-45df-457c-a723-01b78226ad34",
+            "kode_program_studi": "14901",
+            "nama_program_studi": "Profesi Ners",
+            "status": "A",
+            "id_jenjang_pendidikan": "31",
+            "nama_jenjang_pendidikan": "Profesi"
+        },
+        {
+            "id_prodi": "1daad851-b93f-4860-b37d-ddae33f1b860",
+            "kode_program_studi": "79213",
+            "nama_program_studi": "Sastra Inggris",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "adc77657-6904-4aa3-bc6e-40565bdc27bf",
+            "kode_program_studi": "85201",
+            "nama_program_studi": "Pendidikan Jasmani, Kesehatan, dan Rekreasi",
+            "status": "A",
+            "id_jenjang_pendidikan": "30",
+            "nama_jenjang_pendidikan": "S1"
+        },
+        {
+            "id_prodi": "0ddf8240-3661-4030-8319-e0f5241fdc68",
+            "kode_program_studi": "88113",
+            "nama_program_studi": "Pendidikan Bahasa Indonesia",
+            "status": "A",
+            "id_jenjang_pendidikan": "35",
+            "nama_jenjang_pendidikan": "S2"
+        }
+    ]
+}
