@@ -41,76 +41,99 @@ Route::get('/', function () {
 }); */
 
 
-//Google Authentication Routes
+// Rute untuk autentikasi Google
 Route::get('authorized/google', [SocialController::class, 'redirectToGoogle']);
 Route::get('authorized/google/callback', [SocialController::class, 'handleGoogleCallback']);
 
-
+// Rute utama dan pendaftaran mahasiswa baru
 Route::get('/', [MabaController::class, 'index'])->name('daftar.maba');
 Route::get('/daftar-maba', [MabaController::class, 'index'])->name('daftar.mabaumum');
 
+// Rute untuk database kedua
 Route::get('/db', [SecondDatabaseController::class, 'index'])->name('db.index');
 
+// Rute login untuk mahasiswa baru dan fakultas  
 Route::get('/login-maba', [MabaController::class, 'loginmaba'])->name('login.maba');
-
 Route::get('/login-fakultas', [FakultasController::class, 'login'])->name('login.fakultas');
 
+// Rute terkait ujian mahasiswa
 Route::get('/ujian', [MabaController::class, 'ujian'])->name('ujian.maba');
 Route::post('/cekUjian', [MabaController::class, 'cekUjian'])->name('cek.ujian');
 Route::get('/cekUjianOnline', [MabaController::class, 'cekUjianOnline'])->name('cek.ujianOnline');
 
+// Rute login operator dan pendaftaran
 Route::post('/login-operator', [AuthController::class, 'authenticate'])->name('login.operator');
-
 Route::post('/simpan-daftar', [MabaController::class, 'simpandaftar'])->name('simpan.daftar');
+
+// Rute verifikasi PIN dan CAPTCHA
 Route::post('/cekPin', [MabaController::class, 'cekPin'])->name('cek.pin');
 Route::get('/reload-captcha', [MabaController::class, 'reloadCaptcha']);
 
-
+// Rute logout dan pengiriman WA
 Route::get('/keluar', [MabaController::class, 'keluar'])->name('logout.perform');
-
 Route::get('/keluar_operator', [OperatorController::class, 'logout'])->name('logout.operator');
 Route::get('/sendwa', [MabaController::class, 'sendWa'])->name('home.sendwa');
 
+// Grup rute dengan middleware authneofeeder
 Route::middleware('authneofeeder')->group(function() {
     Route::prefix('maba')->group(function () {
+        // Dashboard dan fitur mahasiswa
         Route::get('/dashboard', [MabaController::class, 'home'])->name('home.maba');
 
 
         //Route::get('/send', [MabaController::class, 'sendWa'])->name('home.sendwa');
 
+        // Rute untuk memperbarui data mahasiswa
         Route::post('/update-mhs', [MabaController::class, 'updateMhs'])->name('update.maba');
+        
+        // Rute untuk mengunggah bukti pembayaran
         Route::post('/upload-bukti', [MabaController::class, 'uploadBukti'])->name('uploadBukti.maba');
+        
+        // Rute untuk mengunggah dokumen persyaratan
         Route::post('/upload-syarat', [MabaController::class, 'uploadSyarat'])->name('uploadSyarat.maba');
 
+        // Referensi wilayah
         Route::get('ref-wilayah-provinsi', [MabaController::class, 'wilayahProvinsi']);
         Route::get('ref-wilayah-kota', [MabaController::class, 'wilayahKota']);
         Route::get('ref-wilayah-kecamatan', [MabaController::class, 'wilayahKecamatan']);
-
     });
 });
 
 
+// Grup rute dengan middleware authYPSA untuk modul keuangan
 Route::middleware('authYPSA')->group(function() {
+    // Grup rute dengan prefix 'keuangan'
     Route::prefix('keuangan')->group(function () {
+        // Rute untuk reload captcha
         Route::get('/reload-captcha', [MabaController::class, 'reloadCaptcha']);
+        
+        // Rute dashboard keuangan
         Route::get('/dashboard', [KeuanganController::class, 'index'])->name('keuangan.dashboard');
 
+        // Rute manajemen PIN
         Route::get('/buatpin', [KeuanganController::class, 'buatpin'])->name('buatpin');
         Route::get('/tambah-pin', [KeuanganController::class, 'tambahpin'])->name('keuangan.tambahpin');
         Route::post('/simpan-pin', [KeuanganController::class, 'simpanpin'])->name('simpan.pin');
 
+        // Rute transaksi keuangan
         Route::get('/transaksi', [KeuanganController::class, 'transaksi'])->name('keuangan.transaksi');
 
+        // Rute konfirmasi pembayaran
         Route::get('/konfirmasi-bayar', [KeuanganController::class, 'konfirmasi'])->name('keuangan.konfirmasi');
         Route::post('/verifikasi/{id}', [KeuanganController::class, 'verifikasi'])->name('keuangan.verifikasi');
 
+        // Rute pengiriman reminder
         Route::post('/reminder/{id}', [KeuanganController::class, 'reminder'])->name('keuangan.reminder');
 
+        // Rute manajemen NIM
         Route::get('/buatnim', [KeuanganController::class, 'buatnim'])->name('keuangan.buatnim');
         Route::get('/tambah-nim', [KeuanganController::class, 'tambahnim'])->name('keuangan.tambahnim');
         Route::post('/simpan-nim', [KeuanganController::class, 'simpannim'])->name('simpan.nim');
 
+        // Rute untuk mendapatkan data PIN
         Route::post('/get-pin', [KeuanganController::class, 'getPin'])->name('keuangan.getpin');
+        
+        // Rute untuk reload captcha (duplikat)
         Route::get('/reload-captcha', [MabaController::class, 'reloadCaptcha']);
 
     });
@@ -375,19 +398,41 @@ Route::post('/selesai', [\App\Http\Livewire\SoalUjian::class,'selesai']);
 Route::get('/printpdf/{id}', [MabaController::class, 'printpdf']);
 Route::get('/downloadpdf/{id}', [MabaController::class, 'downloadpdf']);
 
+// Rute untuk injeksi konfirmasi pembayaran berdasarkan PIN
 Route::get('/injekbayar/{pin}', [RekomendasiController::class, 'injekKonfirmasi']);
-Route::get('/keluar_fakultas', [SocialController::class, 'logout']);
-Route::middleware('googleauth')->group(function() {
-    Route::prefix('fakultas')->group(function () {
-        Route::get('/dashboard', [FakultasController::class, 'index']);
-        Route::get('/camaba', [FakultasController::class, 'camaba'])->name('fakultas.camaba');
-        Route::get('/pendaftaran', [FakultasController::class, 'pendaftaran'])->name('fakultas.pendaftaran');
-        Route::get('/rekomendasi', [FakultasController::class, 'rekomendasi']);
-        Route::get('/hasil-kelulusan', [FakultasController::class, 'kelulusan'])->name('fakultas.kelulusan');
-        Route::post('/get-prodi', [FakultasController::class, 'pilihprodi'])->name('fakultas.pilihprodi');
-        Route::get('/reset-prodi', [FakultasController::class, 'resetProdi'])->name('fakultas.reset-prodi');
-        Route::post('/reminder/{id}', [FakultasController::class, 'reminder'])->name('fakultas.reminder');
 
+// Rute untuk logout dari sistem fakultas
+Route::get('/keluar_fakultas', [SocialController::class, 'logout']);
+
+// Grup rute dengan middleware googleauth
+Route::middleware('googleauth')->group(function() {
+    // Grup rute dengan prefix 'fakultas'
+    Route::prefix('fakultas')->group(function () {
+        // Rute dashboard fakultas
+        Route::get('/dashboard', [FakultasController::class, 'index']);
+        
+        // Rute untuk melihat data calon mahasiswa
+        Route::get('/camaba', [FakultasController::class, 'camaba'])->name('fakultas.camaba');
+        
+        // Rute untuk melihat data pendaftaran
+        Route::get('/pendaftaran', [FakultasController::class, 'pendaftaran'])->name('fakultas.pendaftaran');
+        
+        // Rute untuk melihat data rekomendasi
+        Route::get('/rekomendasi', [FakultasController::class, 'rekomendasi']);
+        
+        // Rute untuk melihat hasil kelulusan
+        Route::get('/hasil-kelulusan', [FakultasController::class, 'kelulusan'])->name('fakultas.kelulusan');
+        
+        // Rute untuk mendapatkan data program studi
+        Route::post('/get-prodi', [FakultasController::class, 'pilihprodi'])->name('fakultas.pilihprodi');
+        
+        // Rute untuk mereset pilihan program studi
+        Route::get('/reset-prodi', [FakultasController::class, 'resetProdi'])->name('fakultas.reset-prodi');
+        
+        // Rute untuk mengirim reminder
+        Route::post('/reminder/{id}', [FakultasController::class, 'reminder'])->name('fakultas.reminder');
+        
+        // Rute untuk melihat detail mahasiswa
         Route::get('/lihatmhs/{id}', [FakultasController::class, 'lihatMhs'])->name('fakultas.lihatmhs');
     });
 
