@@ -123,7 +123,7 @@ class KeuanganController extends Controller
 
                 $table="neomahasiswas";
 			    $primary="nomor_pendaftaran";
-			    $prefix="2024";
+			    $prefix="2025";
                 $tipe='1';
 			    $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
 

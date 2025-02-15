@@ -362,7 +362,7 @@ class MabaController extends Controller
 
                 $table="neomahasiswas";
 			    $primary="nomor_pendaftaran";
-			    $prefix="2024";
+			    $prefix="2025";
                 $tipe='1';
 			    $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
 
@@ -606,7 +606,7 @@ class MabaController extends Controller
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
                 'kecamatan'=>$request->kecamatan,
-                'tahun_masuk'=>'2024',
+                'tahun_masuk'=>'2025', // Mengubah tahun masuk menjadi 2025 untuk menyesuaikan dengan tahun akademik 2025/2026. Perubahan ini perlu dilakukan jika proses pendaftaran diperuntukkan untuk tahun akademik berikutnya
                 'kewarganegaraan'=>$request->kewarganegaraan,
                 'konfirmasi'=>$request->konfirmasi,
                 'catatan'=>$request->catatan,
@@ -693,33 +693,34 @@ class MabaController extends Controller
             }
 
         }else if ($pendaftar->jenis_daftar=='2') {
+            // Validasi untuk pendaftar pindahan/transfer
             $request->validate([
-                'ijasah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'khs'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ktm'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'surat_pindah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'screen_pddikti'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ijasah_lanjutan'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'transkrip_nilai'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
+                'ijasah'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Ijazah opsional karena mungkin belum lulus
+                'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk verifikasi identitas
+                'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk keperluan administrasi
+                'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional tergantung kebijakan prodi
+                'khs'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk melihat progress studi
+                'ktm'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib sebagai bukti status mahasiswa
+                'surat_pindah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk proses transfer
+                'screen_pddikti'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk verifikasi data PDDikti
+                'ijasah_lanjutan'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional jika ada ijazah tambahan
+                'transkrip_nilai'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk melihat nilai lengkap
             ]);
 
 
         }else
         {
             $request->validate([
-                'ijasah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'khs'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ktm'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'screen_pddikti'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'surat_pindah'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
-                'ijasah_lanjutan'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                'transkrip_nilai'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
+                'ijasah'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Ijazah opsional karena mungkin belum lulus
+                'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk verifikasi identitas
+                'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk keperluan administrasi
+                'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional tergantung kebijakan prodi
+                'khs'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk melihat progress studi
+                'ktm'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional sebagai bukti status mahasiswa
+                'screen_pddikti'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk verifikasi data PDDikti
+                'surat_pindah'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk proses transfer
+                'ijasah_lanjutan'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk ijazah tambahan
+                'transkrip_nilai'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk melihat nilai lengkap
             ]);
 
 
@@ -923,75 +924,98 @@ class MabaController extends Controller
     }
 
 
-    public function printpdf2()
-	{
+    // public function printpdf2()
+	// {
 
-		$formulir = Neomahasiswa::find('03b5d645-5191-4c4a-a2d5-21723cee8060');
+	// 	$formulir = Neomahasiswa::find('03b5d645-5191-4c4a-a2d5-21723cee8060');
 
-        $headers=[
-					'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-					'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_pmb.png")
-				];
-                //dd($headers);
-		$pdf = \Meneses\LaravelMpdf\Facades\LaravelMpdf::loadView('report.surat',
-																		[
-																			'headers'=>$headers,
-																		],
-																		[],
-																		[
-																			'title' => 'Surat Kelulusan Calon Mahasiswa Baru UNSAP 2024',
-																		]);
-				$file_pdf=AkademikHelpers::public_path("exported/pdf/luluspmb_123.pdf");
-				$pdf->save($file_pdf);
+    //     $headers=[
+	// 				'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
+	// 				'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_pmb.png")
+	// 			];
+    //             //dd($headers);
+	// 	$pdf = \Meneses\LaravelMpdf\Facades\LaravelMpdf::loadView('report.surat',
+	// 																	[
+	// 																		'headers'=>$headers,
+	// 																	],
+	// 																	[],
+	// 																	[
+	// 																		'title' => 'Surat Kelulusan Calon Mahasiswa Baru UNSAP 2025',
+	// 																	]);
+	// 			$file_pdf=AkademikHelpers::public_path("exported/pdf/luluspmb_123.pdf");
+	// 			$pdf->save($file_pdf);
 
-				$pdf_file='public/exported/pdf/luluspmb_123.pdf';
+	// 			$pdf_file='public/exported/pdf/luluspmb_123.pdf';
 
-				return Response()->json([
-										'status'=>1,
-										'pid'=>'fetchdata',
-										'formulir'=>$formulir,
-										'pdf_file'=>$pdf_file
-									], 200);
-	}
+	// 			return Response()->json([
+	// 									'status'=>1,
+	// 									'pid'=>'fetchdata',
+	// 									'formulir'=>$formulir,
+	// 									'pdf_file'=>$pdf_file
+	// 								], 200);
+	// }
 
     public function printpdf($id)
-	{
-
-        $formulir = Neomahasiswa::find($id);
-        $headers=[
-            'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-            'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan.png"),
-            'qrunsap1'=>AkademikHelpers::public_path("images/qrunsap1.png")
+    {
+        $formulir = Neomahasiswa::find($id)->select(
+            'id',
+            'nomor_pendaftaran',
+            'nama_mahasiswa',
+            'asal_perguruan_tinggi',
+            'jenis_daftar',
+            'kode_pt_asal',
+            'kodeprodi_satu'
+        )->first();
+        $headers = [
+            'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+            'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
         ];
-        $prodi=DB::table('pe3_prodi')
-        ->where('config','=',$formulir->kodeprodi_satu)
-        ->first();
+        
+        $prodi = DB::table('pe3_prodi')
+            ->where('config', $formulir->kodeprodi_satu)
+            ->first();
 
+        // Tambahkan kondisi berdasarkan jenjang prodi
+        $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
 
-
-        $pdf = Pdf::loadView('report.surat',['headers' => $headers,'formulir'=>$formulir,'prodi'=>$prodi,'tanggal'=>AkademikHelpers::tanggal('d F Y')]);
+        $pdf = Pdf::loadView($viewName, [
+            'headers' => $headers,
+            'formulir' => $formulir,
+            'prodi' => $prodi,
+            'tanggal' => AkademikHelpers::tanggal('d F Y')
+        ]);
+        
         $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf',$content);
-        return $pdf->stream('Laporan-Data-Santri.pdf');
+        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
+        
+        return $pdf->stream('Surat-Kelulusan.pdf');
     }
 
     public function downloadpdf($file)
     {
         $formulir = Neomahasiswa::find(session('id'));
-        $headers=[
-            'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-            'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan.png"),
-            'qrunsap1'=>AkademikHelpers::public_path("images/qrunsap1.png")
+        $headers = [
+            'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+            'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
         ];
-        $prodi=DB::table('pe3_prodi')
-        ->where('config','=',$formulir->kodeprodi_satu)
-        ->first();
+        
+        $prodi = DB::table('pe3_prodi')
+            ->where('config', $formulir->kodeprodi_satu)
+            ->first();
 
+        // Gunakan kondisi yang sama
+        $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
 
-
-        $pdf = Pdf::loadView('report.surat',['headers' => $headers,'formulir'=>$formulir,'prodi'=>$prodi,'tanggal'=>AkademikHelpers::tanggal('d F Y')]);
+        $pdf = Pdf::loadView($viewName, [
+            'headers' => $headers,
+            'formulir' => $formulir,
+            'prodi' => $prodi,
+            'tanggal' => AkademikHelpers::tanggal('d F Y')
+        ]);
+        
         $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf',$content);
+        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
+        
         return response()->download(storage_path('app/public/exported/pdf/'.$file.'.pdf'));
     }
 

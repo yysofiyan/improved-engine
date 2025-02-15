@@ -286,15 +286,21 @@
                                             PIN PENDAFTARAN : {{ session('pin') }}
                                         </h2>
                                         <p class="card-description">
-                                            Tahun Akademik 2024/2025
+                                            Tahun Akademik 2025 / 2026
                                         </p>
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">
                                                 <label class="col-sm-12 "><strong>Nomor Induk Siswa Nasional (NISN)
                                                     </strong></label>
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="form-control form-control-danger"
-                                                        name="nisn" value="{{ old('nisn', $mhs->nisn) }}">
+                                                    @if(in_array($mhs->jenis_daftar, [2,6]) && $mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
+                                                        <input type="text" class="form-control form-control-danger" 
+                                                            name="nisn" value="{{ old('nisn', $mhs->nisn) }}" readonly>
+                                                        <small class="text-muted">Tidak wajib diisi untuk Program Magister S2 Lanjutan/Pindahan</small>
+                                                    @else
+                                                        <input type="text" class="form-control form-control-danger"
+                                                            name="nisn" value="{{ old('nisn', $mhs->nisn) }}" required>
+                                                    @endif
                                                     @error('nisn')
                                                         <label class="error text-danger">{{ $message }}</label>
                                                     @enderror
@@ -758,9 +764,14 @@
 
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
-                                                <label>Fotocopy STTB/Ijazah SMA/SMK/MA Dilegalisir</label>
+                                                <label>Fotocopy STTB/Ijazah SMA/SMK/MA Dilegalisir 
+                                                    @if($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 3)
+                                                        <span class="badge badge-info">Lewati untuk Mahasiswa Pindahan/Lanjutan</span>
+                                                    @endif
+                                                </label>
                                                 <input type="file" name="ijasah"
-                                                    class="form-control @error('ijasah') is-invalid @enderror">
+                                                    class="form-control @error('ijasah') is-invalid @enderror"
+                                                    @if($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 3) disabled @endif>
 
                                                 @error('file')
                                                     <label class="error mt-2 text-danger">{{ $message }}</label>
@@ -1029,9 +1040,17 @@
                                 @else
                                     <div class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
                                         <label class="col-sm-12 "><strong>Surat Pengumuman Kelulusan</strong></label>
-                                        <a href="{{ url('downloadpdf/' . $mhs->nomor_pendaftaran) }}"
-                                            class="btn btn-info mr-2"> <i class="fa-solid fa-receipt fa-fw mr-2"></i>
-                                            Download Surat Pengumuman Kelulusan</a>
+                                        @if($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
+                                            <a href="{{ url('downloadpdf-s2/' . $mhs->nomor_pendaftaran) }}" class="btn btn-info mr-2">
+                                                <i class="fa-solid fa-receipt fa-fw mr-2"></i>
+                                                Download Surat Kelulusan Pascasarjana (S2)
+                                            </a>
+                                        @else
+                                            <a href="{{ url('downloadpdf/' . $mhs->nomor_pendaftaran) }}" class="btn btn-info mr-2">
+                                                <i class="fa-solid fa-receipt fa-fw mr-2"></i>
+                                                Download Surat Kelulusan Sarjana (S1)
+                                            </a>
+                                        @endif
                                     </div>
                                 @endif
 

@@ -42,7 +42,7 @@
                           PIN PENDAFTARAN : {{ session('pin') }}
                       </h2>
                     <p class="card-description">
-                      Tahun Akademik 2024/2025
+                      Tahun Akademik {{ date('Y') }}/{{ date('Y') + 1 }}
                     </p>
                     <div class="row">
                       <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">

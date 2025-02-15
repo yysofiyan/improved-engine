@@ -97,7 +97,7 @@ class OperatorController extends Controller
             $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang'))
                 ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
                 ->where('id_operator','=',auth()->user()->id)
-				->where('tahun_masuk','2024')
+				->where('tahun_masuk','2025')
 				->get();
                 $data=[];
                 foreach ($getData as $item)
@@ -129,7 +129,7 @@ class OperatorController extends Controller
             $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
                 ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
                 ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
-				->where('tahun_masuk','2024')
+				->where('tahun_masuk','2025')
                 ->orderby('quiz_murid.id','desc')->get();
                 $data=[];
                 foreach ($getData as $item)
@@ -400,7 +400,7 @@ class OperatorController extends Controller
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
                 'kecamatan'=>$request->kecamatan,
-                'tahun_masuk'=>'2024',
+                'tahun_masuk'=>'2025',
                 'kewarganegaraan'=>$request->kewarganegaraan,
                 'konfirmasi'=>$request->konfirmasi,
                 'catatan'=>$request->catatan,
@@ -684,7 +684,7 @@ class OperatorController extends Controller
 
                 $table="neomahasiswas";
 			    $primary="nomor_pendaftaran";
-			    $prefix="2024";
+			    $prefix="2025";
                 $tipe='2';
 			    $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
 

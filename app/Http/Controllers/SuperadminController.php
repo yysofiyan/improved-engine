@@ -63,7 +63,7 @@ class SuperadminController extends Controller
             $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,neomahasiswas.is_aktif,neomahasiswas.handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,status,id_operator,asal_sekolah,neomahasiswas.created_at'))
                 ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
                 ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
-                //->where('neomahasiswas.tahun_masuk','2024')
+                //->where('neomahasiswas.tahun_masuk','2025')
                 ->orderby('neomahasiswas.created_at','asc')
                 ->get();
                 $data=[];
@@ -295,7 +295,7 @@ class SuperadminController extends Controller
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
                 'kecamatan'=>$request->kecamatan,
-                'tahun_masuk'=>'2024',
+                'tahun_masuk'=>'2025',
                 'kewarganegaraan'=>$request->kewarganegaraan,
                 'konfirmasi'=>$request->konfirmasi,
                 'catatan'=>$request->catatan,
@@ -800,7 +800,7 @@ class SuperadminController extends Controller
             $mahasiswa = DB::table('neomahasiswas')
             ->where('pin','=',$request->pin)
             ->first();
-            $tahun='2024';
+            $tahun='2025';
             $idkelas='R';
             $prodi_id=$mahasiswa->kodeprodi_satu;
             $idsmt='1';

@@ -1,0 +1,32 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect to HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect to public folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # ================== BLOKIR JUDI ONLINE ================== #
+    
+    # Blokir via Referer & Query String (Slot, Gacor, dll)
+    RewriteCond %{HTTP_REFERER} (slot-online|gacor|rtp-slot|judi-slot|slot88|maxwin|anti-rungkad|bosku|totoslot|dewa365|pragmaticplay|spadegaming|habanero|joker123|ioncuan|mpo007) [NC,OR]
+    RewriteCond %{QUERY_STRING} (slot|gacor|rtp|judi|maxwin|toto)([^a-z]|$) [NC]
+    RewriteRule ^.*$ - [F,L]
+
+    # Blokir User-Agent Bot Spesifik Judi
+    RewriteCond %{HTTP_USER_AGENT} (SlotMachine|BotJudi|GacorScanner|DewaLive) [NC]
+    RewriteRule ^.*$ - [F,L]
+</IfModule>
+
+# ================== PROTEKSI TAMBAHAN ================== #
+<IfModule mod_headers.c>
+    # Blokir embed dari domain judi
+    Header set Content-Security-Policy "default-src 'self'; frame-src 'none'; frame-ancestors 'self'; form-action 'self'"
+</IfModule>

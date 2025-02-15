@@ -15,6 +15,7 @@ use App\Http\Controllers\RekomendasiController;
 use App\Http\Controllers\SecondDatabaseController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -393,5 +394,6 @@ Route::middleware('googleauth')->group(function() {
 
 
 });
+
 
 

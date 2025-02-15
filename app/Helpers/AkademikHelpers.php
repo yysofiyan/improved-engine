@@ -194,7 +194,7 @@ class AkademikHelpers {
     public static function getDaftar($kode)
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('kodeprodi_satu','=',$kode)
         ->where('pin','<>','')
@@ -207,7 +207,7 @@ class AkademikHelpers {
     public static function getLulus($kode)
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');;
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');;
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
         ->where('kodeprodi_satu','=',$kode)
@@ -222,7 +222,7 @@ class AkademikHelpers {
     public static function getDaftar2($kode)
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('kodeprodi_satu','=',$kode)
         ->where('pin','<>','')
@@ -235,7 +235,7 @@ class AkademikHelpers {
     public static function getLulus2($kode)
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');;
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');;
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
         ->where('kodeprodi_satu','=',$kode)
@@ -298,7 +298,7 @@ class AkademikHelpers {
     public static function getTotalDaftar()
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('pin','<>','')
         ->whereDate('created_at','<=',$tanggal)
@@ -310,7 +310,7 @@ class AkademikHelpers {
     public static function getTotalDaftar2()
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('pin','<>','')
         ->whereDate('created_at','<=',$tanggal)
@@ -322,7 +322,7 @@ class AkademikHelpers {
     public static function getTotalLulus()
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
         ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
         ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
@@ -336,7 +336,7 @@ class AkademikHelpers {
     public static function getTotalLulus2()
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
         ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
         ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
@@ -374,7 +374,7 @@ class AkademikHelpers {
      public static function getTotalPin($kode)
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('kodeprodi_satu','=',$kode)
         ->where('is_aktif','=','1')
@@ -387,7 +387,7 @@ class AkademikHelpers {
     public static function getTotalPin2($kode)
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('kodeprodi_satu','=',$kode)
         ->where('is_aktif','=','1')
@@ -400,7 +400,7 @@ class AkademikHelpers {
     public static function getJumlahPin()
     {
         $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('is_aktif','=','1')
         ->whereDate('created_at','<=',$tanggal)
@@ -412,7 +412,7 @@ class AkademikHelpers {
     public static function getJumlahPin2()
     {
         $tanggal=Carbon::parse(Carbon::now()->subyear())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2023-03-01');
+        $tanggal2=Carbon::createFromFormat('Y-m-d', '2024-03-01');
         $pendaftar=Neomahasiswa::select(DB::raw('*'))
         ->where('is_aktif','=','1')
         ->whereDate('created_at','<=',$tanggal)

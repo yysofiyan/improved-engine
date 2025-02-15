@@ -202,7 +202,7 @@ class RekomendasiController extends Controller
 
                 $table="neomahasiswas";
 			    $primary="nomor_pendaftaran";
-			    $prefix="2024";
+			    $prefix="2025";
                 $tipe='2';
 			    $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
 
@@ -284,7 +284,7 @@ class RekomendasiController extends Controller
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
                 'kecamatan'=>$request->kecamatan,
-                'tahun_masuk'=>'2024',
+                'tahun_masuk'=>'2025',
                 'kewarganegaraan'=>$request->kewarganegaraan,
                 'konfirmasi'=>$request->konfirmasi,
                 'catatan'=>$request->catatan,
@@ -337,7 +337,7 @@ class RekomendasiController extends Controller
                         'provinsi'=>$request->provinsi,
                         'kota'=>$request->kota,
                         'kecamatan'=>$request->kecamatan,
-                        'tahun_masuk'=>'2024',
+                        'tahun_masuk'=>'2025',
                         'kewarganegaraan'=>$request->kewarganegaraan,
                         'konfirmasi'=>$request->konfirmasi,
                         'catatan'=>$request->catatan,
