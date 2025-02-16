@@ -15,6 +15,9 @@ use App\Models\KonfirmasiPembayaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\PendaftaranExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class OperatorController extends Controller
 {

@@ -122,12 +122,14 @@
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
          <div class="d-flex justify-content-between">
           <p class="card-title">Rekap Pendaftaran PMB Tahun 2025</p>
-          <a href="#" class="text-info">Lihat</a>
+          <a href="{{ route('export.pendaftaran') }}" class="btn btn-success btn-flat">
+            <i class="mdi mdi-file-excel"></i> Export Excel
+          </a>
          </div>
          <p class="font-weight-800">Per Tanggal : {{$tanggal}}</p>
           <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP 2025</p>
           <div class="table-responsive">
-            <table id="refMember" class="display expandable-table table-hover" style="width:100%">
+            <table id="refMember2025" class="display expandable-table table-hover" style="width:100%">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -380,8 +382,8 @@
       <div class="card">
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
          <div class="d-flex justify-content-between">
-          <p class="card-title">Rekap Pendaftaran PMB Tahun 2023</p>
-          
+          <p class="card-title">Rekap Pendaftaran PMB Tahun 2024</p>
+          <a href="#" class="text-info btn-export">Lihat</a>
          </div>
          <p class="font-weight-800">Per Tanggal : {{$tanggal1}}</p>
           <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP</p>
@@ -634,14 +636,6 @@
     </div>
   </div> 
 
- <!--  <div class="row">
-
-  
-
-
-
-
-
 @endsection
 
 @push('page-stylesheet')
@@ -746,5 +740,31 @@
       });
       document.getElementById('south-america-legend').innerHTML = southAmericaChart.generateLegend();
     }
+</script>
+<script>
+    $('.btn-export').click(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: "{{ route('export.pendaftaran') }}",
+            method: 'GET',
+            data: {
+                tahun: 2025
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(response) {
+                var blob = new Blob([response]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'rekap_pendaftaran_2025.xlsx';
+                link.click();
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
 </script>
 @endpush

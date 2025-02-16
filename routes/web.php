@@ -17,6 +17,7 @@ use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -446,6 +447,11 @@ Route::middleware('googleauth')->group(function() {
 // Tambahkan route khusus untuk S2
 Route::get('/downloadpdf-s2/{nomor_pendaftaran}', [MabaController::class, 'downloadpdf'])
     ->name('downloadpdf.s2');
+
+// Rute untuk mengekspor data pendaftaran dalam format Excel
+// Menggunakan method GET dan memanggil method export() dari ExportController
+// Nama route: export.pendaftaran
+Route::get('/export-pendaftaran', [ExportController::class, 'export'])->name('export.pendaftaran');
 
 
 
