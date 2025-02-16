@@ -73,7 +73,7 @@ class OperatorController extends Controller
             ->get();
 
             $pendaftarHariIni=Neomahasiswa::where('created_at',Carbon::now())->count();
-            $totalPendaftar=Neomahasiswa::count();
+            $totalPendaftar = Neomahasiswa::count();
             $totalLulus=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
             ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
             ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')->count();
@@ -795,6 +795,12 @@ class OperatorController extends Controller
             return response()->json(['status'=>'200','success'=>$e->getMessage()]);
         }
 
+    }
+
+    public function getPendaftarHariIni() {
+        return response()->json([
+            'count' => \App\Helpers\AkademikHelpers::getDaftarHariIni()
+        ]);
     }
 
 }

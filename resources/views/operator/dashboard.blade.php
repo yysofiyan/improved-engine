@@ -78,7 +78,9 @@
           <div class="card card-tale">
             <div class="card-body">
               <p class="mb-4">Pendaftar Hari Ini</p>
-              <p class="fs-30 mb-2">{{ number_format($pendaftarHariIni,0)}}</p>
+              <p class="fs-30 mb-2">
+                  <span id="pendaftar-hari-ini">{{ number_format($pendaftarHariIni,0) }}</span>
+              </p>
             
             </div>
           </div>
@@ -87,7 +89,7 @@
           <div class="card card-dark-blue">
             <div class="card-body">
               <p class="mb-4">Total Pendaftar</p>
-              <p class="fs-30 mb-2">{{ number_format($totalPendaftar,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getTotalDaftar(),0)}}</p>
               
             </div>
           </div>
@@ -98,7 +100,7 @@
           <div class="card card-light-blue">
             <div class="card-body">
               <p class="mb-4">Jumlah Calon MABA</p>
-              <p class="fs-30 mb-2">{{ number_format($totalLulus,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getTotalLulus(),0)}}</p>
              
             </div>
           </div>
@@ -107,7 +109,7 @@
           <div class="card card-light-danger">
             <div class="card-body">
               <p class="mb-4">Jumlah PIN Aktif</p>
-              <p class="fs-30 mb-2">{{ number_format($totalPin,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getJumlahPin(),0)}}</p>
              
             </div>
           </div>
@@ -768,5 +770,18 @@
             }
         });
     });
+</script>
+<script>
+    function updatePendaftarHariIni() {
+        $.get('/api/pendaftar-hari-ini', function(data) {
+            $('#pendaftar-hari-ini').text(data.count.toLocaleString('id-ID'));
+        });
+    }
+    
+    // Update pertama kali
+    updatePendaftarHariIni();
+    
+    // Update setiap 30 detik
+    setInterval(updatePendaftarHariIni, 30000);
 </script>
 @endpush

@@ -653,5 +653,10 @@ class AkademikHelpers {
                         ], $result);
     } 
 
+    public static function getDaftarHariIni() {
+        return Neomahasiswa::whereDate('created_at', today())
+            ->whereYear('created_at', 2025)
+            ->count();
+    }
 
 }

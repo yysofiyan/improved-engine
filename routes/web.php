@@ -470,4 +470,10 @@ Route::get('/images/persyaratan/{filename}', function ($filename) {
     ]);
 })->where('filename', '.*');
 
+// Rute API untuk mendapatkan jumlah pendaftar hari ini
+// Menggunakan method getPendaftarHariIni dari OperatorController
+// Data dikembalikan dalam format JSON
+Route::get('/api/pendaftar-hari-ini', [OperatorController::class, 'getPendaftarHariIni'])
+    ->name('api.pendaftar-hari-ini'); // Menambahkan nama rute untuk referensi
+
 
