@@ -448,7 +448,11 @@ Route::middleware('googleauth')->group(function() {
 Route::get('/downloadpdf-s2/{nomor_pendaftaran}', [MabaController::class, 'downloadpdf'])
     ->name('downloadpdf.s2');
 
-Route::get('/export-pendaftaran', [ExportController::class, 'export'])->name('export.pendaftaran');
+// Rute untuk mengekspor data pendaftaran dalam format Excel
+// Parameter tahun dapat diopsionalkan untuk memfilter data berdasarkan tahun tertentu
+Route::get('/export-pendaftaran', [ExportController::class, 'export'])
+    ->name('export.pendaftaran')
+    ->middleware('auth'); // Tambahkan middleware auth untuk keamanan
 
 
 
