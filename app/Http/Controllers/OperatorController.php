@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\KonfirmasiPembayaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OperatorController extends Controller
 {
@@ -610,7 +611,37 @@ class OperatorController extends Controller
     }
     public function lihatpdf($file)
     {
-        return response()->file(storage_path('app/public/exported/pdf/'.$file.'.pdf'));
+        try {
+            // Cari data mahasiswa berdasarkan nomor pendaftaran
+            $formulir = Neomahasiswa::with(['prodiRelation'])
+                ->where('nomor_pendaftaran', $file)
+                ->firstOrFail();
+
+            // Validasi data prodi
+            if(!$formulir->kodeprodi_satu || !$formulir->prodiRelation) {
+                throw new Exception('Data prodi tidak valid');
+            }
+
+            // Tentukan template berdasarkan jenjang
+            $viewName = ($formulir->prodiRelation->nama_jenjang == 'S-2') 
+                ? 'report.surat_s2' 
+                : 'report.surat_s1';
+
+            // Membuat PDF dengan menggunakan view yang telah ditentukan
+            $pdf = Pdf::loadView($viewName, [
+                'formulir' => $formulir, // Data formulir mahasiswa
+                'prodi' => $formulir->prodiRelation, // Data program studi terkait
+                'tanggal' => now()->format('d F Y') // Tanggal saat ini dengan format 'd F Y'
+            ]);
+
+            // Mengembalikan PDF sebagai stream dengan nama file yang dihasilkan
+            return $pdf->stream("Surat_Kelulusan_{$file}.pdf");
+
+        } catch (\Exception $e) {
+            // Jika terjadi error, redirect kembali dengan pesan error
+            return redirect()->back()
+                ->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
     }
 
     public function logout()

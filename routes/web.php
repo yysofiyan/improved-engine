@@ -229,7 +229,8 @@ Route::middleware('authPMB')->group(function() {
         Route::post('/update-mhs', [OperatorController::class, 'updateMhs'])->name('operator.updatemaba');
         Route::post('/upload-syarat', [OperatorController::class, 'uploadSyarat'])->name('operator.uploadsyarat');
 
-        Route::get('/lihatpdf/{id}', [OperatorController::class, 'lihatpdf']);
+        Route::get('/lihatpdf/{nomor_pendaftaran}', [OperatorController::class, 'lihatpdf'])
+            ->name('operator.lihatpdf');
 
         Route::get('/buatpin', [OperatorController::class, 'buatpin'])->name('operator.buatpin');
         Route::get('/tambah-pin', [OperatorController::class, 'tambahpin'])->name('operator.tambahpin');
