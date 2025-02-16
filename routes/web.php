@@ -448,9 +448,6 @@ Route::middleware('googleauth')->group(function() {
 Route::get('/downloadpdf-s2/{nomor_pendaftaran}', [MabaController::class, 'downloadpdf'])
     ->name('downloadpdf.s2');
 
-// Rute untuk mengekspor data pendaftaran dalam format Excel
-// Menggunakan method GET dan memanggil method export() dari ExportController
-// Nama route: export.pendaftaran
 Route::get('/export-pendaftaran', [ExportController::class, 'export'])->name('export.pendaftaran');
 
 

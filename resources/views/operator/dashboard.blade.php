@@ -383,7 +383,9 @@
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
          <div class="d-flex justify-content-between">
           <p class="card-title">Rekap Pendaftaran PMB Tahun 2024</p>
-          <a href="#" class="text-info btn-export">Lihat</a>
+          {{-- <a href="{{ route('export.pendaftaran.2024') }}" class="btn btn-success btn-flat">
+            <i class="mdi mdi-file-excel"></i> Export 2024 --}}
+          </a>
          </div>
          <p class="font-weight-800">Per Tanggal : {{$tanggal1}}</p>
           <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP</p>

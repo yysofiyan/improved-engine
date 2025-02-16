@@ -221,25 +221,25 @@ class AkademikHelpers {
 
     public static function getDaftar2($kode)
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
-        
         return Neomahasiswa::where('kodeprodi_satu', $kode)
             ->where('pin', '<>', '')
-            ->whereBetween('created_at', [$start, $end])
+            ->whereBetween('created_at', ['2024-03-01', '2025-02-28'])
             ->count();
     }
 
     public static function getLulus2($kode)
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
-        
-        return Neomahasiswa::join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
-            ->where('kodeprodi_satu', $kode)
-            ->where('quiz_murid.status', '1')
-            ->whereBetween('neomahasiswas.created_at', [$start, $end])
+        $tanggal = Carbon::parse(Carbon::now())->format('Y-m-d');
+        $tanggal2 = Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $pendaftar = Neomahasiswa::select(DB::raw('*'))
+            ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
+            ->where('kodeprodi_satu', '=', $kode)
+            ->whereDate('created_at', '<=', $tanggal)
+            ->whereDate('created_at', '>=', $tanggal2)
+            ->where('quiz_murid.status', '=', '1')
             ->count();
+
+        return $pendaftar;
     }
 
     public static function getPastDaftar($kode)
@@ -290,26 +290,58 @@ class AkademikHelpers {
         return number_format($persen,0).'%';        
     }
 
+    /**
+     * Mendapatkan total jumlah pendaftar mahasiswa baru
+     * 
+     * Fungsi ini menghitung total pendaftar mahasiswa baru dengan kriteria:
+     * - Memiliki PIN yang tidak kosong
+     * - Tanggal pendaftaran antara 1 Februari 2025 hingga hari ini
+     *
+     * @return int Jumlah total pendaftar
+     */
     public static function getTotalDaftar()
     {
-        $tanggal=Carbon::parse(Carbon::now())->format('Y-m-d');
-        $tanggal2=Carbon::createFromFormat('Y-m-d', '2025-02-01');
-        $pendaftar=Neomahasiswa::select(DB::raw('*'))
-        ->where('pin','<>','')
-        ->whereDate('created_at','<=',$tanggal)
-        ->whereDate('created_at','>=',$tanggal2)
-        ->count();        
-        return $pendaftar;        
+        // Mendapatkan tanggal hari ini dalam format Y-m-d
+        $tanggalSekarang = Carbon::now()->format('Y-m-d');
+        
+        // Menetapkan tanggal awal periode pendaftaran
+        $tanggalAwal = Carbon::createFromFormat('Y-m-d', '2025-02-01');
+        
+        // Menghitung jumlah pendaftar dengan kriteria yang ditentukan
+        $totalPendaftar = Neomahasiswa::query()
+            ->whereNotNull('pin') // Hanya yang memiliki PIN
+            ->whereDate('created_at', '<=', $tanggalSekarang) // Sampai hari ini
+            ->whereDate('created_at', '>=', $tanggalAwal) // Mulai 1 Februari 2025
+            ->count();
+            
+        return $totalPendaftar;
     }
 
+    /**
+     * Mendapatkan total jumlah pendaftar mahasiswa baru tahun 2024
+     * 
+     * Fungsi ini menghitung total pendaftar mahasiswa baru untuk data perbandingan tahun 2024 dengan kriteria:
+     * - Memiliki PIN yang tidak kosong
+     * - Tanggal pendaftaran antara 1 Februari 2024 hingga 31 Desember 2024
+     *
+     * @return int Jumlah total pendaftar tahun 2024
+     */
     public static function getTotalDaftar2()
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
+        // Menetapkan tanggal akhir periode pendaftaran tahun 2024
+        $tanggalAkhir = Carbon::createFromFormat('Y-m-d', '2024-12-31');
         
-        return Neomahasiswa::where('pin', '<>', '')
-            ->whereBetween('created_at', [$start, $end])
+        // Menetapkan tanggal awal periode pendaftaran tahun 2024
+        $tanggalAwal = Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        
+        // Menghitung jumlah pendaftar dengan kriteria yang ditentukan
+        $totalPendaftar = Neomahasiswa::query()
+            ->whereNotNull('pin') // Hanya yang memiliki PIN
+            ->whereDate('created_at', '<=', $tanggalAkhir) // Sampai 31 Desember 2024
+            ->whereDate('created_at', '>=', $tanggalAwal) // Mulai 1 Februari 2024
             ->count();
+            
+        return $totalPendaftar;
     }
 
     public static function getTotalLulus()
@@ -328,13 +360,19 @@ class AkademikHelpers {
 
     public static function getTotalLulus2()
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
+        // Menetapkan tanggal awal dan akhir periode tahun 2024
+        $tanggalAwal = Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggalAkhir = Carbon::createFromFormat('Y-m-d', '2024-12-31');
         
-        return Neomahasiswa::join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
-            ->whereBetween('neomahasiswas.created_at', [$start, $end])
-            ->where('quiz_murid.status', '1')
+        // Menghitung jumlah mahasiswa yang lulus pada tahun 2024
+        $pendaftar = Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
+            ->join('pe3_prodi', 'neomahasiswas.kodeprodi_satu', '=', 'pe3_prodi.config')
+            ->join('quiz_murid', 'neomahasiswas.id', '=', 'quiz_murid.murid_id')
+            ->whereDate('created_at', '>=', $tanggalAwal)
+            ->whereDate('created_at', '<=', $tanggalAkhir)
             ->count();
+            
+        return $pendaftar;        
     }
 
     public static function getPastTotalDaftar()
@@ -376,13 +414,17 @@ class AkademikHelpers {
 
     public static function getTotalPin2($kode)
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
+        $tanggalAwal = Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggalAkhir = Carbon::createFromFormat('Y-m-d', '2024-12-31');
         
-        return Neomahasiswa::where('kodeprodi_satu', $kode)
-            ->where('is_aktif', '1')
-            ->whereBetween('created_at', [$start, $end])
+        $pendaftar = Neomahasiswa::select(DB::raw('*'))
+            ->where('kodeprodi_satu', '=', $kode)
+            ->where('is_aktif', '=', '1')
+            ->whereDate('created_at', '>=', $tanggalAwal)
+            ->whereDate('created_at', '<=', $tanggalAkhir)
             ->count();
+            
+        return $pendaftar;        
     }
 
     public static function getJumlahPin()
@@ -399,12 +441,14 @@ class AkademikHelpers {
 
     public static function getJumlahPin2()
     {
-        $start = '2024-03-01';
-        $end = '2025-02-28';
-        
-        return Neomahasiswa::where('is_aktif', '1')
-            ->whereBetween('created_at', [$start, $end])
+        $tanggalAwal = Carbon::createFromFormat('Y-m-d', '2024-03-01');
+        $tanggalAkhir = Carbon::createFromFormat('Y-m-d', '2024-12-31');
+        $pendaftar = Neomahasiswa::select(DB::raw('*'))
+            ->where('is_aktif', '=', '1')
+            ->whereDate('created_at', '>=', $tanggalAwal)
+            ->whereDate('created_at', '<=', $tanggalAkhir)
             ->count();
+        return $pendaftar;
     }
 
     public static function getFakultasNama($kode)
