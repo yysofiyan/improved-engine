@@ -18,6 +18,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ExportController;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -454,5 +455,19 @@ Route::get('/export-pendaftaran', [ExportController::class, 'export'])
     ->name('export.pendaftaran')
     ->middleware('auth'); // Tambahkan middleware auth untuk keamanan
 
+Route::get('/images/persyaratan/{filename}', function ($filename) {
+    // Membuat path file berdasarkan disk 'public' yang dikonfigurasi di filesystems.php
+    $path = Storage::disk('public')->path('persyaratan/'.$filename);
+    
+    // Memeriksa apakah file ada di storage
+    if(!Storage::disk('public')->exists('persyaratan/'.$filename)) {
+        abort(404, 'File tidak ditemukan'); // Mengembalikan error 404 jika file tidak ada
+    }
+    
+    // Mengembalikan file sebagai response dengan header yang sesuai
+    return response()->file($path, [
+        'Content-Type' => Storage::disk('public')->mimeType('persyaratan/'.$filename)
+    ]);
+})->where('filename', '.*');
 
 

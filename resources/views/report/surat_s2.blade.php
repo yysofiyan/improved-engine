@@ -82,7 +82,7 @@ ini_set('memory_limit', '256M');
     <!-- Pernyataan Panitia -->
     <p style="text-align:center; font-weight:bold; margin-bottom:20px">
         Panitia Penerimaan Mahasiswa Baru (PMB) Universitas Sebelas April dan STAI Sebelas April Sumedang<br>
-        Tahun Akademik 205/2026 menyatakan bahwa: </p>
+        Tahun Akademik 2025 / 2026 menyatakan bahwa: </p>
     
     <!-- Data Pribadi Pascasarjana -->
     <table style="font-size:12px">

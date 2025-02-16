@@ -347,9 +347,8 @@ class OperatorController extends Controller
 
     public function updateMhs(Request $request)
     {
-
         $request->validate([
-            'nisn' => 'required|min:10|max:10',
+            'nisn' => 'sometimes|nullable|min:10|max:10',
             'nik' => 'required|min:16|max:16',
             'nama_mahasiswa' => 'required',
             'nama_ibu_kandung' => 'required',
@@ -364,17 +363,15 @@ class OperatorController extends Controller
             'asal_sekolah' => 'required',
             'tahun_lulus' => 'required',
             'kode_pt_asal' => '',
+            'instansi' => 'sometimes|nullable|max:255',
             'kode_prodi_asal' => '',
             'catatan' => '',
             'kodeprodi_satu' => 'required',
             'kodeprodi_dua' => 'required',
-            'jenis_daftar' => 'required',
             'kodewilayah'=>'',
             'kewarganegaraan'=>'required',
             'konfirmasi' => 'required',
         ]);
-
-
 
         try {
             Neomahasiswa::updateOrCreate([
@@ -400,6 +397,7 @@ class OperatorController extends Controller
                 'tahun_lulus'=>$request->tahun_lulus,
                 'kode_pt_asal'=>$request->kode_pt_asal,
                 'kode_prodi_asal'=>$request->kode_prodi_asal,
+                'instansi'=>$request->instansi,
                 'negara'=>$request->negara,
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
@@ -412,18 +410,10 @@ class OperatorController extends Controller
                 'updated_at'=>Carbon::now(),
             ]);
 
-
             return response()->json(['status'=>'200','success'=>'Data Sukses di Simpan']);
         } catch (Exception $e) {
             return response()->json(['status'=>'200','success'=>$e->getMessage()]);
         }
-
-
-
-
-
-
-
     }
 
     public function uploadSyarat(Request $request)
@@ -476,27 +466,27 @@ class OperatorController extends Controller
                     ['id'=>$id_persyaratan],
                     [
                     'id_user'=>session('id'),
-                    'ijasah'=>'no_image.png',
-                    'is_ijasah'=>$request->is_ijasah,
+                    'ijasah'=>'images/persyaratan/no_image.png',
+                    'is_ijasah'=>$request->is_ijasah ?? 0,
                     'id_operator'=>auth()->user()->id,
-                    'ktp_kk'=>'no_image.png',
-                    'is_ktp'=>$request->is_ktp,
-                    'foto'=>'no_image.png',
-                    'is_foto'=>$request->is_foto,
-                    'ket_sehat'=>'no_image.png',
-                    'is_ket_sehat'=>$request->is_ket_sehat,
+                    'ktp_kk'=>asset('images/persyaratan/no_image.png'),
+                    'is_ktp'=>$request->is_ktp ?? 0,
+                    'foto'=>asset('images/persyaratan/no_image.png'),
+                    'is_foto'=>$request->is_foto ?? 0,
+                    'ket_sehat'=>asset('images/persyaratan/no_image.png'),
+                    'is_ket_sehat'=>$request->is_ket_sehat ?? 0,
                     'khs'=>'',
-                    'is_khs'=>'0',
+                    'is_khs'=>$request->is_khs ?? 0,
                     'ktm'=>'',
-                    'is_ktm'=>'0',
+                    'is_ktm'=>$request->is_ktm ?? 0,
                     'surat_pindah'=>'',
-                    'is_surat_pindah'=>'0',
+                    'is_surat_pindah'=>$request->is_surat_pindah ?? 0,
                     'screen_pddikti'=>'',
-                    'is_screen_pddikti'=>'0',
+                    'is_screen_pddikti'=>$request->is_screen_pddikti ?? 0,
                     'ijasah_lanjutan'=>'',
-                    'is_ijasah_lanjutan'=>'0',
+                    'is_ijasah_lanjutan'=>$request->is_ijasah_lanjutan ?? 0,
                     'transkrip_nilai'=>'',
-                    'is_transkrip_nilai'=>'0',
+                    'is_transkrip_nilai'=>$request->is_transkrip_nilai ?? 0,
                     'created_at'=>Carbon::now(),
                     'updated_at'=>Carbon::now()
                 ]);
@@ -506,27 +496,27 @@ class OperatorController extends Controller
                     ['id'=>$id_persyaratan],
                     [
                     'id_user'=>session('id'),
-                    'ijasah'=>'no_image.png',
-                    'is_ijasah'=>$request->is_ijasah,
+                    'ijasah'=>'images/persyaratan/no_image.png',
+                    'is_ijasah'=>$request->is_ijasah ?? 0,
                     'id_operator'=>auth()->user()->id,
-                    'ktp_kk'=>'no_image.png',
-                    'is_ktp'=>$request->is_ktp,
-                    'foto'=>'no_image.png',
-                    'is_foto'=>$request->is_foto,
+                    'ktp_kk'=>asset('images/persyaratan/no_image.png'),
+                    'is_ktp'=>$request->is_ktp ?? 0,
+                    'foto'=>asset('images/persyaratan/no_image.png'),
+                    'is_foto'=>$request->is_foto ?? 0,
                     'ket_sehat'=>'',
-                    'is_ket_sehat'=>'0',
+                    'is_ket_sehat'=>$request->is_ket_sehat ?? 0,
                     'khs'=>'',
-                    'is_khs'=>'0',
+                    'is_khs'=>$request->is_khs ?? 0,
                     'ktm'=>'',
-                    'is_ktm'=>'0',
+                    'is_ktm'=>$request->is_ktm ?? 0,
                     'surat_pindah'=>'',
-                    'is_surat_pindah'=>'0',
+                    'is_surat_pindah'=>$request->is_surat_pindah ?? 0,
                     'screen_pddikti'=>'',
-                    'is_screen_pddikti'=>'0',
+                    'is_screen_pddikti'=>$request->is_screen_pddikti ?? 0,
                     'ijasah_lanjutan'=>'',
-                    'is_ijasah_lanjutan'=>'0',
+                    'is_ijasah_lanjutan'=>$request->is_ijasah_lanjutan ?? 0,
                     'transkrip_nilai'=>'',
-                    'is_transkrip_nilai'=>'0',
+                    'is_transkrip_nilai'=>$request->is_transkrip_nilai ?? 0,
                     'created_at'=>Carbon::now(),
                     'updated_at'=>Carbon::now()
                 ]);
@@ -542,27 +532,27 @@ class OperatorController extends Controller
                     ['id'=>$id_persyaratan],
                     [
                     'id_user'=>session('id'),
-                    'ijasah'=>'no_image.png',
-                    'is_ijasah'=>$request->is_ijasah,
+                    'ijasah'=>'images/persyaratan/no_image.png',
+                    'is_ijasah'=>$request->is_ijasah ?? 0,
                     'id_operator'=>auth()->user()->id,
-                    'ktp_kk'=>'no_image.png',
-                    'is_ktp'=>$request->is_ktp,
-                    'foto'=>'no_image.png',
-                    'is_foto'=>$request->is_foto,
+                    'ktp_kk'=>asset('images/persyaratan/no_image.png'),
+                    'is_ktp'=>$request->is_ktp ?? 0,
+                    'foto'=>asset('images/persyaratan/no_image.png'),
+                    'is_foto'=>$request->is_foto ?? 0,
                     'ket_sehat'=>'',
-                    'is_ket_sehat'=>'1',
-                    'khs'=>'no_image.png',
-                    'is_khs'=>$request->is_khs,
-                    'ktm'=>'no_image.png',
-                    'is_ktm'=>$request->is_ktm,
-                    'surat_pindah'=>'no_image.png',
-                    'is_surat_pindah'=>$request->is_surat_pindah,
+                    'is_ket_sehat'=>$request->is_ket_sehat ?? 0,
+                    'khs'=>asset('images/persyaratan/no_image.png'),
+                    'is_khs'=>$request->is_khs ?? 0,
+                    'ktm'=>asset('images/persyaratan/no_image.png'),
+                    'is_ktm'=>$request->is_ktm ?? 0,
+                    'surat_pindah'=>asset('images/persyaratan/no_image.png'),
+                    'is_surat_pindah'=>$request->is_surat_pindah ?? 0,
                     'screen_pddikti'=>'',
-                    'is_screen_pddikti'=>'0',
+                    'is_screen_pddikti'=>$request->is_screen_pddikti ?? 0,
                     'ijasah_lanjutan'=>'',
-                    'is_ijasah_lanjutan'=>'0',
+                    'is_ijasah_lanjutan'=>$request->is_ijasah_lanjutan ?? 0,
                     'transkrip_nilai'=>'',
-                    'is_transkrip_nilai'=>'0',
+                    'is_transkrip_nilai'=>$request->is_transkrip_nilai ?? 0,
                     'created_at'=>Carbon::now(),
                     'updated_at'=>Carbon::now()
                 ]);
@@ -575,27 +565,27 @@ class OperatorController extends Controller
                     ['id'=>$id_persyaratan],
                     [
                     'id_user'=>session('id'),
-                    'ijasah'=>'no_image.png',
-                    'is_ijasah'=>$request->is_ijasah,
+                    'ijasah'=>'images/persyaratan/no_image.png',
+                    'is_ijasah'=>$request->is_ijasah ?? 0,
                     'id_operator'=>auth()->user()->id,
-                    'ktp_kk'=>'no_image.png',
-                    'is_ktp'=>$request->is_ktp,
-                    'foto'=>'no_image.png',
-                    'is_foto'=>$request->is_foto,
+                    'ktp_kk'=>asset('images/persyaratan/no_image.png'),
+                    'is_ktp'=>$request->is_ktp ?? 0,
+                    'foto'=>asset('images/persyaratan/no_image.png'),
+                    'is_foto'=>$request->is_foto ?? 0,
                     'ket_sehat'=>'',
-                    'is_ket_sehat'=>'0',
+                    'is_ket_sehat'=>$request->is_ket_sehat ?? 0,
                     'khs'=>'',
-                    'is_khs'=>'0',
+                    'is_khs'=>$request->is_khs ?? 0,
                     'ktm'=>'',
-                    'is_ktm'=>'0',
+                    'is_ktm'=>$request->is_ktm ?? 0,
                     'surat_pindah'=>'',
-                    'is_surat_pindah'=>'0',
-                    'screen_pddikti'=>'no_image.png',
-                    'is_screen_pddikti'=>$request->is_screen_pddikti,
-                    'ijasah_lanjutan'=>'no_image.png',
-                    'is_ijasah_lanjutan'=>$request->is_ijasah_lanjutan,
-                    'transkrip_nilai'=>'no_image.png',
-                    'is_transkrip_nilai'=>$request->is_transkrip_nilai,
+                    'is_surat_pindah'=>$request->is_surat_pindah ?? 0,
+                    'screen_pddikti'=>asset('images/persyaratan/no_image.png'),
+                    'is_screen_pddikti'=>$request->is_screen_pddikti ?? 0,
+                    'ijasah_lanjutan'=>asset('images/persyaratan/no_image.png'),
+                    'is_ijasah_lanjutan'=>$request->is_ijasah_lanjutan ?? 0,
+                    'transkrip_nilai'=>asset('images/persyaratan/no_image.png'),
+                    'is_transkrip_nilai'=>$request->is_transkrip_nilai ?? 0,
                     'created_at'=>Carbon::now(),
                     'updated_at'=>Carbon::now()
                 ]);

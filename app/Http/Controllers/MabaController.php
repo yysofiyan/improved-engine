@@ -13,7 +13,7 @@ use App\Models\Neomahasiswa;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\AkademikHelpers;
-use Mews\Captca\Facades\Captcha;
+use Mews\Captcha\Facades\Captcha;
 use Illuminate\Support\Facades\DB;
 use App\Models\KonfirmasiPembayaran;
 use Illuminate\Support\Facades\Auth;

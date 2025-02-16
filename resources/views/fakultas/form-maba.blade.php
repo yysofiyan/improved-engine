@@ -33,7 +33,7 @@
                             PIN PENDAFTARAN : {{ $mhs->pin }}
                         </h2>
                       <p class="card-description">
-                        Tahun Akademik 2024/2025
+                        Tahun Akademik 2025/2026
                       </p>
                       <div class="row">
                         <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">

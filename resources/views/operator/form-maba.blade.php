@@ -42,17 +42,38 @@
                           PIN PENDAFTARAN : {{ session('pin') }}
                       </h2>
                     <p class="card-description">
-                      Tahun Akademik 2024/2025
+                      Tahun Akademik {{ \Carbon\Carbon::now()->year }}/ {{ \Carbon\Carbon::now()->addYear()->year }}
                     </p>
                     <div class="row">
                       <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">
-                          <label class="col-sm-12 "><strong>Nomor Induk Siswa Nasional (NISN) </strong></label>
-                              <div class="col-sm-12">
-                                  <input type="text" class="form-control form-control-danger" name="nisn" value="{{old('nisn', $mhs->nisn)}}">
-                                  @error('nisn')
+                          <label class="col-sm-12 "><strong>Nomor Induk Siswa Nasional (NISN) 
+                              @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                  <span class="badge badge-info">Opsional</span>
+                              @else
+                                  <span class="text-danger">*</span>
+                                  <span class="badge badge-info">Wajib untuk Reguler S1</span>
+                              @endif
+                          </strong></label>
+                          <div class="col-sm-12">
+                              <input type="text" 
+                                     class="form-control @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) form-control-danger @endif" 
+                                     name="nisn" 
+                                     value="{{old('nisn', $mhs->nisn)}}"
+                                     @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) required @endif
+                                     placeholder="@if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) @endif">
+                              @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                  <small class="text-muted">Tidak wajib untuk:
+                                      <ul>
+                                          <li>Program Pascasarjana (S2)</li>
+                                          <li>Mahasiswa Pindahan</li>
+                                          <li>Mahasiswa Lanjutan</li>
+                                      </ul>
+                                  </small>
+                              @endif
+                              @error('nisn')
                                   <label class="error text-danger">{{ $message }}</label>
-                                  @enderror
-                              </div>
+                              @enderror
+                          </div>
       
       
                       </div>
@@ -251,27 +272,51 @@
                       </div>
                   </div>
       
-                  <p class="card-description" style="color:red">
-                      Jika Mahasiwa Pindahan/Lanjutan (Wajib Diisi)
-                    </p>
+                  {{-- <p class="card-description" style="color:red">
+                      Untuk Mahasiswa Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)
+                    </p> --}}
       
                   <div class="row">
                       <div class="form-group col-lg-6 @error('kode_pt_asal') has-danger @enderror">
-                          <label class="col-sm-12 "><strong>Asal Perguruan Tinggi</strong></label>
+                          <label class="col-sm-12">
+                              <strong>Asal Perguruan Tinggi</strong>
+                              <span class="badge badge-info">Untuk Mahasiswa Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)</span>
+                          </label>
                           <div class="col-sm-12">
-                              <input type="text" class="form-control @error('kode_pt_asal') form-control-danger @enderror" name="kode_pt_asal" value="{{old('kode_pt_asal', $mhs->kode_pt_asal)}}" data-display="static">
-                          @error('kode_pt_asal')
-                          <label class="error mt-2 text-danger">{{ $message }}</label>
-                          @enderror
+                              <input type="text" 
+                                     class="form-control @error('kode_pt_asal') form-control-danger @enderror" 
+                                     name="kode_pt_asal" 
+                                     value="{{ old('kode_pt_asal', $mhs->kode_pt_asal) }}" 
+                                     data-display="static">
+                              @error('kode_pt_asal')
+                                  <label class="error mt-2 text-danger">{{ $message }}</label>
+                              @enderror
                           </div>
                       </div>
-      
+
                       <div class="form-group col-lg-6 @error('kode_prodi_asal') has-danger @enderror">
-                          <label class="col-sm-12 "><strong>Asal Program Studi</strong></label>
+                          <label class="col-sm-12"><strong>Asal Program Studi</strong></label>
                           <div class="col-sm-12">
-                              <input type="text" class="form-control @error('kode_prodi_asal') form-control-danger @enderror" name="kode_prodi_asal" value="{{old('kode_prodi_asal', $mhs->kode_prodi_asal)}}" data-display="static">
-                             
+                              <input type="text" 
+                                     class="form-control @error('kode_prodi_asal') form-control-danger @enderror" 
+                                     name="kode_prodi_asal" 
+                                     value="{{ old('kode_prodi_asal', $mhs->kode_prodi_asal) }}" 
+                                     data-display="static">
                           </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="form-group col-lg-6">
+                          <label>
+                              Instansi
+                              <span class="badge badge-info">Diisi khusus untuk mahasiswa pasca</span>
+                          </label>
+                          <input type="text" 
+                                 class="form-control" 
+                                 name="instansi" 
+                                 placeholder="Masukkan Nama Instansi (Jika Ada)"
+                                 value="{{ old('instansi', $mhs->instansi) }}">
                       </div>
                   </div>
       
@@ -414,19 +459,32 @@
                       
                   </div>
       
-                    <div class="row">
+                  <div class="row">
                       <div class="col-md-12">
-                        <div class="form-check form-check-flat form-check-primary">
-      
-                          <label class="form-check-label">
-                            <input type="checkbox" name="konfirmasi" value="1" class="form-check-input" required {{ $mhs->konfirmasi == '1' ? 'checked':'' }}>
-                            Saya menyetujui data yang sudah diisi pada form di atas dan bertanggung jawab terhadap isi data tersebut
-                          <i class="input-helper"></i></label>
-                        </div>
-      
-                        <button type="submit" id="saveBtn" class="btn btn-primary mr-2"> <i class="fa-solid fa-save fa-fw mr-2"></i> Submit</button>
-                        <a href="{{ url('logout')}}" class="btn btn-light">Cancel</a>
+                          <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                                  <input type="checkbox" name="konfirmasi" value="1" 
+                                      class="form-check-input form-check-input-primary" required
+                                      {{ $mhs->konfirmasi == '1' ? 'checked' : '' }}>
+                                  Saya menyetujui data yang sudah diisi pada form di atas dan
+                                  bertanggung jawab terhadap isi data tersebut
+                                  <i class="input-helper"></i>
+                              </label>
+                          </div>
                       </div>
+                      
+                      <div class="col-md-12 mt-3">
+                          <button type="submit" id="saveBtn" class="btn btn-primary mr-2">
+                              <i class="fa-solid fa-save fa-fw mr-2"></i> Submit
+                          </button>
+                          
+                          <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                              @csrf
+                              @method('POST')
+                              <button type="submit" class="btn btn-light">Cancel</button>
+                          </form>
+                      </div>
+                  </div>
       
                     </div>
                    
@@ -450,13 +508,17 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->ijasah) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->ijasah) }}" target="_blank"> File</a></label>
                           </div>
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                             <label>Verifikasi</label>
                     
                             <div class="input-group col-xs-12">
-                                <input type="checkbox" name="is_ijasah" value="1" class="form-check-input" required {{ $persyaratan->is_ijasah == '1' ? 'checked':'' }}> Dokumen Ada
+                                @if($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 6)
+                                    <input type="checkbox" name="is_ijasah" value="1" class="form-check-input" required {{ $persyaratan->is_ijasah == '1' ? 'checked':'' }} disabled> Dokumen Ada <span class="badge badge-info">Tidak diperlukan untuk mahasiswa pindahan/lanjutan</span>
+                                @else
+                                    <input type="checkbox" name="is_ijasah" value="1" class="form-check-input" required {{ $persyaratan->is_ijasah == '1' ? 'checked':'' }}> Dokumen Ada
+                                @endif
                             </div>
                             @error('file')
                             <label class="error mt-2 text-danger">{{ $message }}</label>
@@ -475,7 +537,7 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->ktp_kk) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->ktp_kk) }}" target="_blank"> File</a></label>
                           </div>
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                             <label>Verifikasi</label>
@@ -500,7 +562,7 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->foto) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->foto) }}" target="_blank"> File</a></label>
                           </div>
 
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
@@ -529,7 +591,7 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->ket_sehat) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->ket_sehat) }}" target="_blank"> File</a></label>
                           </div>
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                             <label>Verifikasi</label>
@@ -559,7 +621,7 @@
                                 @error('file')
                                 <label class="error mt-2 text-danger">{{ $message }}</label>
                                 @enderror
-                                <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->khs) }}" target="_blank"> File</a></label>
+                                <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->khs) }}" target="_blank"> File</a></label>
                             </div>
                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                                 <label>Verifikasi</label>
@@ -584,7 +646,7 @@
                                 @error('file')
                                 <label class="error mt-2 text-danger">{{ $message }}</label>
                                 @enderror
-                                <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->ktm) }}" target="_blank"> File</a></label>
+                                <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->ktm) }}" target="_blank"> File</a></label>
                             </div>
                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                                 <label>Verifikasi</label>
@@ -608,7 +670,7 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->surat_pindah) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->surat_pindah) }}" target="_blank"> File</a></label>
                           </div>
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                             <label>Verifikasi</label>
@@ -633,7 +695,7 @@
                               @error('file')
                               <label class="error mt-2 text-danger">{{ $message }}</label>
                               @enderror
-                              <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->screen_pddikti) }}" target="_blank"> File</a></label>
+                              <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->screen_pddikti) }}" target="_blank"> File</a></label>
                           </div>
                           <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                             <label>Verifikasi</label>
@@ -665,7 +727,7 @@
                                 @error('file')
                                 <label class="error mt-2 text-danger">{{ $message }}</label>
                                 @enderror
-                                <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->ijasah_lanjutan) }}" target="_blank"> File</a></label>
+                                <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->ijasah_lanjutan) }}" target="_blank"> File</a></label>
                             </div>
                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                                 <label>Verifikasi</label>
@@ -690,7 +752,7 @@
                                 @error('file')
                                 <label class="error mt-2 text-danger">{{ $message }}</label>
                                 @enderror
-                                <label class="info mt-2 text-white"><a href="{{ url('images/persyaratan/'.$persyaratan->transkrip_nilai) }}" target="_blank"> File</a></label>
+                                <label class="info mt-2 text-white"><a href="{{ asset($persyaratan->transkrip_nilai) }}" target="_blank"> File</a></label>
                             </div>
                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                                 <label>Verifikasi</label>
@@ -849,8 +911,13 @@
       let year = d.getFullYear();
   
       let fullDate = `${day}, ${date} ${name} ${year}`;
-      document.getElementById("tanggal").innerHTML = fullDate;
-  
+      
+      // Cek apakah elemen dengan id "tanggal" ada sebelum mengatur innerHTML
+      let tanggalElement = document.getElementById("tanggal");
+      if(tanggalElement) {
+          tanggalElement.innerHTML = fullDate;
+      }
+
       $('.counter').each(function() {
           $(this).prop('Counter', 0).animate({
               Counter: $(this).text()

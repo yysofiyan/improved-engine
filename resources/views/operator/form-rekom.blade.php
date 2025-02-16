@@ -42,19 +42,41 @@
                           PIN PENDAFTARAN : {!! session('pin') !!}
                       </h2>
                     <p class="card-description">
-                      Tahun Akademik 2024/2025
+                      Tahun Akademik 2025/2026
                     </p>
                     <div class="row">
-                      <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">
-                          <label class="col-sm-12 "><strong>Nomor Induk Siswa Nasional (NISN) </strong></label>
-                              <div class="col-sm-12">
-                                  <input type="text" class="form-control form-control-danger" name="nisn" value="{{old('nisn', $mhs->nisn)}}">
-                                  @error('nisn')
-                                  <label class="error text-danger">{{ $message }}</label>
-                                  @enderror
-                              </div>
-      
-      
+                        <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">
+                            <label class="col-sm-12">
+                                <strong>Nomor Induk Siswa Nasional (NISN)
+                                    @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                        <span class="badge badge-info">Opsional</span>
+                                    @else
+                                        <span class="text-danger">*</span>
+                                        <span class="badge badge-info">Wajib untuk Reguler S1</span>
+                                    @endif
+                                </strong>
+                            </label>
+                            <div class="col-sm-12">
+                                <input type="text" 
+                                       class="form-control @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) form-control-danger @endif" 
+                                       name="nisn" 
+                                       value="{{ old('nisn', $mhs->nisn) }}"
+                                       @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) required @endif
+                                       placeholder="@if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))Diisi jika ada @elseWajib diisi @endif">
+                                @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                    <small class="text-muted">Tidak wajib untuk:
+                                        <ul>
+                                            <li>Program Pascasarjana (S2)</li>
+                                            <li>Mahasiswa Pindahan</li>
+                                            <li>Mahasiswa Lanjutan</li>
+                                        </ul>
+                                    </small>
+                                @endif
+                                @error('nisn')
+                                    <label class="error text-danger">{{ $message }}</label>
+                                @enderror
+                            </div>
+
                       </div>
                       <div class="form-group col-lg-6 @error('nik') has-danger @enderror">
                           <label class="col-sm-12 "><strong>Nomor Induk Kependudukan (NIK) </strong></label>
@@ -251,13 +273,13 @@
                       </div>
                   </div>
       
-                  <p class="card-description" style="color:red">
+                  {{-- <p class="card-description" style="color:red">
                       Jika Mahasiwa Pindahan/Lanjutan (Wajib Diisi)
-                    </p>
+                    </p> --}}
       
                   <div class="row">
                       <div class="form-group col-lg-6 @error('kode_pt_asal') has-danger @enderror">
-                          <label class="col-sm-12 "><strong>Asal Perguruan Tinggi</strong></label>
+                          <label class="col-sm-12 "><strong>Asal Perguruan Tinggi</strong> <span class="badge badge-info">Untuk Mahasiswa Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)</span></label>
                           <div class="col-sm-12">
                               <input type="text" class="form-control @error('kode_pt_asal') form-control-danger @enderror" name="kode_pt_asal" value="{{old('kode_pt_asal', $mhs->kode_pt_asal)}}" data-display="static">
                           @error('kode_pt_asal')
@@ -274,6 +296,20 @@
                           </div>
                       </div>
                   </div>
+
+                  <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label>
+                            Instansi
+                            <span class="badge badge-info">Diisi khusus untuk mahasiswa pasca</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               name="instansi" 
+                               placeholder="Masukkan Nama Instansi (Jika Ada)"
+                               value="{{ old('instansi', $mhs->instansi) }}">
+                    </div>
+                </div>
       
                   <p class="card-description">
                       Pilih Program Studi
@@ -425,9 +461,8 @@
                         </div>
       
                         <button type="submit" id="saveBtn" class="btn btn-primary mr-2"> <i class="fa-solid fa-save fa-fw mr-2"></i> Submit</button>
-                        <a href="{{ url('logout')}}" class="btn btn-light">Cancel</a>
+                        <button type="button" class="btn btn-danger" onclick="return resetForm()">Batal</button>
                       </div>
-      
                     </div>
                    
       
@@ -851,8 +886,13 @@
       let year = d.getFullYear();
   
       let fullDate = `${day}, ${date} ${name} ${year}`;
-      document.getElementById("tanggal").innerHTML = fullDate;
-  
+      
+      // Cek apakah elemen dengan id "tanggal" ada sebelum mengatur innerHTML
+      let tanggalElement = document.getElementById("tanggal");
+      if(tanggalElement) {
+          tanggalElement.innerHTML = fullDate;
+      }
+
       $('.counter').each(function() {
           $(this).prop('Counter', 0).animate({
               Counter: $(this).text()
@@ -1077,6 +1117,42 @@
         });
   
   
-    </script>
+  </script>
   
   @endpush
+
+<script>
+    function resetForm() {
+        // Reset form utama
+        const form = document.getElementById('MabaForm');
+        form.reset();
+        
+        // Reset select2
+        $('select').each(function() {
+            $(this).val(null).trigger('change.select2');
+        });
+        
+        // Reset input file dan preview
+        $('input[type="file"]').val('');
+        $('.preview-image').attr('src', '{{ asset('images/persyaratan/no_image.png') }}');
+        
+        // Reset tanggal
+        $('input[type="date"]').val('');
+        
+        // Reset radio button dan checkbox
+        $('input[type="radio"]').prop('checked', false);
+        $('input[type="checkbox"]').prop('checked', false);
+        
+        // Reset textarea
+        $('textarea').val('');
+        
+        // Reset validation errors
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').remove();
+        
+        // Focus ke field pertama
+        $('input[name="nama_mahasiswa"]').focus();
+        
+        console.log('Form telah direset'); // Untuk debugging
+    }
+</script>

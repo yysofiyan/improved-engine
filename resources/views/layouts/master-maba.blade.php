@@ -25,10 +25,13 @@
               <img src="{{url('images/student.png')}}" alt="profile"/>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-              <a href="{{ url('keluar') }}" class="dropdown-item">
-                <i class="ti-power-off text-primary"></i>
-                Logout
-              </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                  <i class="ti-power-off text-primary"></i>
+                  Logout
+                </a>
+              </form>
             </div>
           </li>
 

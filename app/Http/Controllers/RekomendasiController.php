@@ -175,6 +175,7 @@ class RekomendasiController extends Controller
             'asal_sekolah' => 'required',
             'tahun_lulus' => 'required',
             'kode_pt_asal' => '',
+            'instansi' => 'sometimes|nullable|max:255',
             'kode_prodi_asal' => '',
             'catatan' => '',
             'kodeprodi_satu' => 'required',
@@ -279,6 +280,7 @@ class RekomendasiController extends Controller
                 'asal_sekolah'=>$request->asal_sekolah,
                 'tahun_lulus'=>$request->tahun_lulus,
                 'kode_pt_asal'=>$request->kode_pt_asal,
+                'instansi'=>$request->instansi,
                 'kode_prodi_asal'=>$request->kode_prodi_asal,
                 'negara'=>$request->negara,
                 'provinsi'=>$request->provinsi,
@@ -332,6 +334,7 @@ class RekomendasiController extends Controller
                         'asal_sekolah'=>$request->asal_sekolah,
                         'tahun_lulus'=>$request->tahun_lulus,
                         'kode_pt_asal'=>$request->kode_pt_asal,
+                        'instansi' => $request->instansi,
                         'kode_prodi_asal'=>$request->kode_prodi_asal,
                         'negara'=>$request->negara,
                         'provinsi'=>$request->provinsi,
@@ -627,4 +630,86 @@ class RekomendasiController extends Controller
         }
 
     }
+
+    public function printpdf($id)
+    {
+        try {
+            // Ambil data formulir dengan kolom tertentu
+            $formulir = Neomahasiswa::findOrFail($id)->select(
+                'id',
+                'nomor_pendaftaran',
+                'nama_mahasiswa', 
+                'asal_perguruan_tinggi',
+                'jenis_daftar',
+                'kode_pt_asal',
+                'kodeprodi_satu'
+            )->first();
+
+            // Siapkan header untuk PDF
+            $headers = [
+                'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+                'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
+            ];
+
+            // Cari data prodi berdasarkan kode prodi
+            $prodi = DB::table('pe3_prodi')
+                ->where('config', $formulir->kodeprodi_satu)
+                ->first();
+
+            // Validasi data prodi
+            if(!$prodi) {
+                throw new Exception('Data prodi tidak ditemukan');
+            }
+
+            // Tentukan view berdasarkan jenjang prodi
+            $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+
+            // Generate PDF
+            $pdf = Pdf::loadView($viewName, [
+                'headers' => $headers,
+                'formulir' => $formulir,
+                'prodi' => $prodi,
+                'tanggal' => now()->format('d F Y')
+            ]);
+
+            // Simpan PDF ke storage
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
+
+            // Stream PDF ke browser
+            return $pdf->stream("Surat_Kelulusan_{$formulir->nomor_pendaftaran}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
+    }
+
+    public function downloadpdf($file)
+    {
+        try {
+            $formulir = Neomahasiswa::findOrFail(session('id'));
+            $prodi = DB::table('pe3_prodi')
+                ->where('config', $formulir->kodeprodi_satu)
+                ->first();
+
+            // Validasi data prodi
+            if(!$prodi) {
+                throw new Exception('Data prodi tidak ditemukan');
+            }
+
+            $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+
+            $pdf = Pdf::loadView($viewName, [
+                'formulir' => $formulir,
+                'prodi' => $prodi,
+                'tanggal' => now()->format('d F Y')
+            ]);
+
+            return $pdf->stream("Surat_Kelulusan_{$formulir->nomor_pendaftaran}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
+    }
+
 }
