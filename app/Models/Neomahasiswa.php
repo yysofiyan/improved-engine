@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Prodi;
 
 class Neomahasiswa extends Model
 {
@@ -63,6 +64,7 @@ class Neomahasiswa extends Model
         'kewarganegaraan',
         'created_at',
         'updated_at',
+        'instansi'
 	];
 
     public $incrementing = false;
@@ -71,5 +73,24 @@ class Neomahasiswa extends Model
         'id'=>'string'
     ];
 
+    /**
+     * Mendefinisikan relasi belongsTo ke model Prodi berdasarkan kode_prodi
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'kodeprodi_satu', 'kode_prodi');
+    }
 
+    /**
+     * Mendefinisikan relasi belongsTo ke model Prodi berdasarkan config
+     * Digunakan untuk mendapatkan data prodi yang sesuai dengan konfigurasi
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo 
+     */
+    public function prodiRelation()
+    {
+        return $this->belongsTo(Prodi::class, 'kodeprodi_satu', 'config');
+    }
 }

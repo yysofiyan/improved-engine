@@ -2,6 +2,14 @@
 
 @section('title', 'Dashboard')
 @section('content')
+    @php
+        dump([
+            'ijasah' => $persyaratan->ijasah ?? null,
+            'prodi' => $mhs->prodi ? $mhs->prodi->toArray() : null,
+            'soal' => $soal,
+            'nisn' => $mhs->nisn
+        ]);
+    @endphp
     <div class="row" style="margin-top:50px;">
         <div class="col-md-12 grid-margin">
             <div class="row">
@@ -23,24 +31,32 @@
     </div>
 
     <div class="row">
-        <div class="col-12 grid-margin stretch-card">
+        <div class="col-12 col-md-12 col-lg-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Upload Bukti Pembayaran</h4>
-                    <div class="card-description">
-                        <p>Petunjuk :</p>
-                        <ol class="list">
-                            <li>Silahkan Melakukan Pembayaran Biaya Pendaftaran dan Aktifasi PIN Melalui Transfer ke No
-                                Rekening BNI : <strong style="color: black">22022043</strong> atas nama <strong
-                                    style="color: black">Yayasan Pendidikan 11 April</strong> Sejumlah <b>Rp. 200.000</b>
+                    <h4 class="card-title mb-4 text-primary">Upload Bukti Pembayaran</h4>
+                    <div class="card-text">
+                        <p class="mb-3 fw-medium">Petunjuk :</p>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item border-0 bg-light mb-2 rounded">
+                                Silahkan melakukan pembayaran biaya pendaftaran dan
+                                <span class="badge bg-info">Aktivasi PIN</span> melalui transfer ke:
+                                <div class="d-flex align-items-center gap-2 mt-2">
+                                    <span class="badge bg-info">Rekening BJB</span>
+                                    <span class="badge bg-info">011.001.001.1941</span>
+                                </div>
+                                <div class="mt-2">
+                                    Atas nama: <strong>Yayasan Pendidikan 11 April</strong>
+                                </div>
+                                <div class="mt-2">
+                                    Sejumlah: <span class="badge bg-info">Rp. 200.000</span>
+                                </div>
                             </li>
-                            <li>Upload Bukti Pembayaran Pada Form ini
-                            </li>
-                            <li>Silahkan Menunggu Verifikasi Pembayaran Maksimal 2 x 24 Jam
-                            </li>
-                            <li>Info selanjutnya akan ada notifikasi melalui whatsapp dengan nomor <span
-                                    style="background-color: greenyellow;color:black"><strong>0812-2227-0896</strong>
-                                </span> <strong style="color: black">(Abaikan jika selain Nomor ini )</strong>
+                            <li class="list-group-item border-0 bg-light mb-2 rounded">Upload Bukti Pembayaran Pada Form
+                                ini</li>
+                            <li class="list-group-item border-0 bg-light mb-2 rounded">
+                                Verifikasi pembayaran akan diproses setelah data diterima
+                                <span class="badge bg-info">Maksimal 4 x 24 Jam pada Hari Kerja</span>
                             </li>
                         </ol>
                     </div>
@@ -107,7 +123,8 @@
 
                         <div class="row">
                             <div class="form-group col-lg-6 @error('pin') has-danger @enderror">
-                                <label>Upload Bukti Bayar</label>
+                                <label style="font-style: italic;">Upload Bukti Bayar (Maks. 1MB, format:
+                                    png/jpg/pdf)</label>
                                 @if ($konfirmasi->verified == '11')
                                     <br />
                                 @else
@@ -120,8 +137,8 @@
                                 @enderror
                                 @if ($konfirmasi->bukti_bayar != 'no_photo.png')
                                     <label class="info mt-2 text-white"><a
-                                            href="{{ url('images/pmb/' . $konfirmasi->bukti_bayar) }}" target="_blank"> Bukti
-                                            Bayar</a></label>
+                                            href="{{ url('images/pmb/' . $konfirmasi->bukti_bayar) }}" target="_blank"
+                                            class="badge badge-primary"> Lihat Bukti Bayar</a></label>
                                 @endif
 
                             </div>
@@ -161,7 +178,7 @@
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6">PIN </h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6"><b>{{ session('pin') }}</b></h4>
                                                     </td>
@@ -172,7 +189,7 @@
                                                             <h4 class="mb-6 mb-xl-6">Nomor Pendaftaran </h4>
                                                         </h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6"><b>{{ session('nomor_pendaftaran') }}</b>
                                                         </h4>
@@ -182,7 +199,7 @@
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6">NIK </h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6"><b>{{ $pendaftar->nik }}</b></h4>
                                                     </td>
@@ -191,7 +208,7 @@
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6">Nama Lengkap</h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6"><b>{{ $pendaftar->nama_mahasiswa }}</b>
                                                         </h4>
@@ -199,18 +216,19 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <h4 class="mb-6 mb-xl-6">Nomor Handphone :</h4>
+                                                        <h4 class="mb-6 mb-xl-6">Nomor Handphone</h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
-                                                        <h4 class="mb-6 mb-xl-6"><b>+62{{ $pendaftar->handphone }}</b></h4>
+                                                        <h4 class="mb-6 mb-xl-6"><b>+62{{ $pendaftar->handphone }}</b>
+                                                        </h4>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <h4 class="mb-6 mb-xl-6">STATUS PIN </h4>
                                                     </td>
-                                                    <td>:</td>
+                                                    <td style="padding: 0 10px;">:</td>
                                                     <td>
                                                         @if ($pendaftar->is_aktif == '1')
                                                             <button type="button"
@@ -248,25 +266,27 @@
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card position-relative">
                     <div class="card-body">
-                        <h4 class="card-title">Langkah-langkah Menjadi Calon Mahasiswa UNSAP</h4>
+                        <h4 class="card-title text-center text-md-left">Langkah-langkah Menjadi Calon Mahasiswa UNSAP</h4>
                         <div class="row mb-5">
-                            <div class="col-sm-3">
-                                <button class="btn btn-primary" onclick="openFormBiodata()"> <i
-                                        class="fa-solid fa-users fa-fw mr-2"></i>Langkah 1 Formulir</button>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3 mb-md-0">
+                                <button class="btn btn-primary btn-block" onclick="openFormBiodata()"> 
+                                    <i class="fa-solid fa-users fa-fw mr-2"></i>Langkah 1 Formulir
+                                </button>
                             </div>
-                            <div class="col-sm-3">
-                                <button class="btn btn-success" onclick="openFormPersyaratan()"> <i
-                                        class="fa-solid fa-folder-plus fa-fw mr-2"></i> Langkah 2 Persyaratan</button>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3 mb-md-0">
+                                <button class="btn btn-success btn-block" onclick="openFormPersyaratan()"> 
+                                    <i class="fa-solid fa-folder-plus fa-fw mr-2"></i> Langkah 2 Persyaratan
+                                </button>
                             </div>
-
-                            <div class="col-sm-3">
-                                <button class="btn btn-warning" onclick="openFormUjian()"> <i
-                                        class="fa-solid fa-list fa-fw mr-2"></i> Langkah 3 Ujian</button>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3 mb-md-0">
+                                <button class="btn btn-warning btn-block" onclick="openFormUjian()"> 
+                                    <i class="fa-solid fa-list fa-fw mr-2"></i> Langkah 3 Ujian
+                                </button>
                             </div>
-
-                            <div class="col-sm-3">
-                                <button class="btn btn-info" onclick="openFormHasil()"> <i
-                                        class="fa-solid fa-ticket-alt fa-fw mr-2"></i> Langkah 4 Hasil Kelulusan</button>
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <button class="btn btn-info btn-block" onclick="openFormHasil()"> 
+                                    <i class="fa-solid fa-ticket-alt fa-fw mr-2"></i> Langkah 4 Hasil Kelulusan
+                                </button>
                             </div>
 
 
@@ -290,23 +310,36 @@
                                         </p>
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('nisn') has-danger @enderror">
-                                                <label class="col-sm-12 "><strong>Nomor Induk Siswa Nasional (NISN)
-                                                    </strong></label>
+                                                <label class="col-sm-12">
+                                                    <strong>Nomor Induk Siswa Nasional (NISN)
+                                                        @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                                            <span class="badge badge-info">Opsional</span>
+                                                        @else
+                                                            <span class="text-danger">*</span>
+                                                            <span class="badge badge-info">Wajib untuk Reguler S1</span>
+                                                        @endif
+                                                    </strong>
+                                                </label>
                                                 <div class="col-sm-12">
-                                                    @if(in_array($mhs->jenis_daftar, [2,6]) && $mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
-                                                        <input type="text" class="form-control form-control-danger" 
-                                                            name="nisn" value="{{ old('nisn', $mhs->nisn) }}" readonly>
-                                                        <small class="text-muted">Tidak wajib diisi untuk Program Magister S2 Lanjutan/Pindahan</small>
-                                                    @else
-                                                        <input type="text" class="form-control form-control-danger"
-                                                            name="nisn" value="{{ old('nisn', $mhs->nisn) }}" required>
+                                                    <input type="text" 
+                                                           class="form-control @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) form-control-danger @endif" 
+                                                           name="nisn" 
+                                                           value="{{ old('nisn', $mhs->nisn) }}"
+                                                           @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) required @endif
+                                                           placeholder="@if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))Diisi jika ada @elseWajib diisi @endif">
+                                                    @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
+                                                        <small class="text-muted">Tidak wajib untuk:
+                                                            <ul>
+                                                                <li>Program Pascasarjana (S2)</li>
+                                                                <li>Mahasiswa Pindahan</li>
+                                                                <li>Mahasiswa Lanjutan</li>
+                                                            </ul>
+                                                        </small>
                                                     @endif
                                                     @error('nisn')
                                                         <label class="error text-danger">{{ $message }}</label>
                                                     @enderror
                                                 </div>
-
-
                                             </div>
                                             <div class="form-group col-lg-6 @error('nik') has-danger @enderror">
                                                 <label class="col-sm-12 "><strong>Nomor Induk Kependudukan (NIK)
@@ -541,13 +574,9 @@
                                             </div>
                                         </div>
 
-                                        <p class="card-description" style="color:red">
-                                            Jika Mahasiwa Pindahan/Lanjutan (Wajib Diisi)
-                                        </p>
-
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('kode_pt_asal') has-danger @enderror">
-                                                <label class="col-sm-12 "><strong>Asal Perguruan Tinggi</strong></label>
+                                                <label class="col-sm-12 "><strong>Asal Perguruan Tinggi <span class="badge badge-info">Untuk Mahasiswa Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)</span></strong></label>
                                                 <div class="col-sm-12">
                                                     <input type="text"
                                                         class="form-control @error('kode_pt_asal') form-control-danger @enderror"
@@ -571,6 +600,16 @@
                                                         data-display="static">
 
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6">
+                                                <label>Instansi <span class="badge badge-info">Diisi khusus untuk mahasiswa pasca</span></label>
+                                                <input type="text" class="form-control" 
+                                                       name="instansi" 
+                                                       placeholder="Masukkan Nama Instansi (Jika Ada)"
+                                                       value="{{ old('instansi', $mhs->instansi) }}">
                                             </div>
                                         </div>
 
@@ -658,8 +697,7 @@
                                             <div class="form-group col-lg-3" id="level1">
                                                 <label>Negara</label>
                                                 <select class="form-control" id="negara" name="negara" required>
-                                                    <option value="ID"
-                                                        {{ $mhs->negara == 'ID' ? 'selected' : '' }}>
+                                                    <option value="ID" {{ $mhs->negara == 'ID' ? 'selected' : '' }}>
                                                         Indonesia</option>
                                                     @foreach ($negara as $negara)
                                                         <option
@@ -725,7 +763,6 @@
                                             </div>
 
 
-
                                         </div>
 
                                         <div class="row">
@@ -742,8 +779,8 @@
                                                 </div>
 
                                                 <button type="submit" id="saveBtn" class="btn btn-primary mr-2"> <i
-                                                        class="fa-solid fa-save fa-fw mr-2"></i> Submit</button>
-                                                <a href="{{ url('logout') }}" class="btn btn-light">Cancel</a>
+                                                        class="fa-solid fa-save fa-fw mr-2"></i> Simpan</button>
+                                                <a href="{{ url('keluar') }}" class="btn btn-light">Keluar</a>
                                             </div>
 
                                         </div>
@@ -764,21 +801,24 @@
 
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
-                                                <label>Fotocopy STTB/Ijazah SMA/SMK/MA Dilegalisir 
-                                                    @if($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 3)
-                                                        <span class="badge badge-info">Lewati untuk Mahasiswa Pindahan/Lanjutan</span>
+                                                <label>Fotocopy STTB/Ijazah SMA/SMK/MA Dilegalisir
+                                                    @if ($mhs->jenis_daftar == 1 || $mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 6)
+                                                        <span class="badge badge-info">Lewati untuk Mahasiswa
+                                                            Pindahan/Lanjutan</span>
                                                     @endif
                                                 </label>
                                                 <input type="file" name="ijasah"
                                                     class="form-control @error('ijasah') is-invalid @enderror"
-                                                    @if($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 3) disabled @endif>
+                                                    @if ($mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 6) disabled @endif>
 
-                                                @error('file')
+                                                @error('ijasah')
                                                     <label class="error mt-2 text-danger">{{ $message }}</label>
                                                 @enderror
-                                                <label class="info mt-2 text-white"><a
-                                                        href="{{ url('images/persyaratan/' . $persyaratan->ijasah) }}"
-                                                        target="_blank"> File</a></label>
+                                                @if($persyaratan->ijasah)
+                                                    <label class="info mt-2 text-white"><a
+                                                            href="{{ url('images/persyaratan/' . $persyaratan->ijasah) }}"
+                                                            target="_blank"> Lihat File</a></label>
+                                                @endif
                                             </div>
 
 
@@ -796,7 +836,7 @@
                                                 @enderror
                                                 <label class="info mt-2 text-white"><a
                                                         href="{{ url('images/persyaratan/' . $persyaratan->ktp_kk) }}"
-                                                        target="_blank"> File</a></label>
+                                                        target="_blank"> Lihat File</a></label>
                                             </div>
 
 
@@ -814,7 +854,7 @@
                                                 @enderror
                                                 <label class="info mt-2 text-white"><a
                                                         href="{{ url('images/persyaratan/' . $persyaratan->foto) }}"
-                                                        target="_blank"> File</a></label>
+                                                        target="_blank"> Lihat File</a></label>
                                             </div>
 
 
@@ -833,7 +873,7 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->ket_sehat) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
 
 
@@ -856,7 +896,7 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->khs) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
 
 
@@ -874,7 +914,7 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->ktm) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
 
 
@@ -891,7 +931,7 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->surat_pindah) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
 
 
@@ -909,14 +949,13 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->screen_pddikti) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
 
 
 
                                             </div>
                                         @endif
-
 
                                         @if ($mhs->jenis_daftar == '6')
                                             <p class="card-description">
@@ -927,14 +966,18 @@
                                                 <div class="form-group col-lg-6 @error('file') has-danger @enderror">
                                                     <label>Fotocopy Ijasah D1/D2/D3 di Legalisir</label>
                                                     <input type="file" name="ijasah_lanjutan"
-                                                        class="form-control @error('ijasah_lanjutan') is-invalid @enderror">
+                                                        class="form-control @error('ijasah_lanjutan') is-invalid @enderror"
+                                                        @if(empty($persyaratan->ijasah_lanjutan)) required @endif>
 
-                                                    @error('file')
+                                                    @error('ijasah_lanjutan')
                                                         <label class="error mt-2 text-danger">{{ $message }}</label>
                                                     @enderror
-                                                    <label class="info mt-2 text-white"><a
-                                                            href="{{ url('images/persyaratan/' . $persyaratan->ijasah_lanjutan) }}"
-                                                            target="_blank"> File</a></label>
+                                                    
+                                                    @if(!empty($persyaratan->ijasah_lanjutan))
+                                                        <label class="info mt-2 text-white">
+                                                            <a href="{{ url('images/persyaratan/' . $persyaratan->ijasah_lanjutan) }}" target="_blank"> File</a>
+                                                        </label>
+                                                    @endif
                                                 </div>
 
 
@@ -952,7 +995,7 @@
                                                     @enderror
                                                     <label class="info mt-2 text-white"><a
                                                             href="{{ url('images/persyaratan/' . $persyaratan->transkrip_nilai) }}"
-                                                            target="_blank"> File</a></label>
+                                                            target="_blank"> Lihat File</a></label>
                                                 </div>
                                                 <div class="form-group col-lg-6 @error('file') has-danger @enderror">
 
@@ -965,9 +1008,12 @@
                                         @endif
 
                                         <div class="text-left">
-                                            @if ($mhs->nisn != '')
-                                                <button type="submit" class="btn btn-success"
-                                                    id="btnImport">Submit</button>
+                                            @if(
+                                                ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2') || 
+                                                in_array($mhs->jenis_daftar, [2,6]) || 
+                                                ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn))
+                                            )
+                                                <button type="submit" class="btn btn-success" id="btnImport">Submit</button>
                                             @endif
                                         </div>
 
@@ -996,23 +1042,23 @@
                                     PIN PENDAFTARAN : {{ session('pin') }}
                                 </h2>
                                 <div class="row">
-                                    {{-- @if ($persyaratan->ijasah != '')
-                    <div class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
-                        <label class="col-sm-12 btn btn-success mr-2 "><strong>Selamat Anda Mendapatkan Voucher Pendaftaran Tanpa Tes Ujian. Surat Kelulusan dapat di download di Langkah 4 </strong></label>
-                       
-                    </div>
-                    @endif --}}
-                                    @if ($persyaratan->ijasah != '' && $soal == 0 && $mhs->nisn != '')
-                                        <div
-                                            class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
-                                            <label class="col-sm-12 "><strong>Silahkan Klik Tombol Dibawah untuk memulai
-                                                    Ujian </strong></label>
-                                            <a href="{{ url('cekUjianOnline') }}" class="btn btn-info mr-2"> <i
-                                                    class="fa-solid fa-tasks fa-fw mr-2"></i> Mulai Ujian</a>
+                                    @if(
+                                        (
+                                            // Untuk S2 tidak perlu cek NISN
+                                            ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2' && $persyaratan->ijasah) || 
+                                            
+                                            // Untuk non-S2 wajib NISN
+                                            ($persyaratan->ijasah && !empty($mhs->nisn))
+                                        ) 
+                                        && $soal == 0
+                                    )
+                                        <div class="form-group col-lg-6 mx-auto">
+                                            <a href="{{ url('cekUjianOnline') }}" class="btn btn-info mr-2">
+                                                <i class="fa-solid fa-tasks fa-fw mr-2"></i> Mulai Ujian
+                                            </a>
                                         </div>
                                     @elseif ($persyaratan->ijasah != '' && $soal != 0 && $mhs->nisn != '')
-                                        <div
-                                            class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
+                                        <div class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
                                             <label class="col-sm-12 btn btn-success mr-2 "><strong>Selamat Anda Telah
                                                     Menyelesaikan Ujian. Hasil Ujian Sudah Ada Di Langkah 4 Silahkan Klik
                                                     Pengumuman Kelulusan </strong></label>
@@ -1040,13 +1086,16 @@
                                 @else
                                     <div class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
                                         <label class="col-sm-12 "><strong>Surat Pengumuman Kelulusan</strong></label>
-                                        @if($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
-                                            <a href="{{ url('downloadpdf-s2/' . $mhs->nomor_pendaftaran) }}" class="btn btn-info mr-2">
+                                        @if ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
+                                            <a href="{{ route('downloadpdf.s2', $mhs->nomor_pendaftaran) }}" 
+                                               class="btn btn-info mr-2"
+                                               target="_blank">
                                                 <i class="fa-solid fa-receipt fa-fw mr-2"></i>
                                                 Download Surat Kelulusan Pascasarjana (S2)
                                             </a>
                                         @else
-                                            <a href="{{ url('downloadpdf/' . $mhs->nomor_pendaftaran) }}" class="btn btn-info mr-2">
+                                            <a href="{{ url('downloadpdf/' . $mhs->nomor_pendaftaran) }}"
+                                                class="btn btn-info mr-2">
                                                 <i class="fa-solid fa-receipt fa-fw mr-2"></i>
                                                 Download Surat Kelulusan Sarjana (S1)
                                             </a>

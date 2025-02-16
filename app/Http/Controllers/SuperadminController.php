@@ -130,21 +130,40 @@ class SuperadminController extends Controller
 
     public function lihatpdf($file)
     {
-        $formulir = Neomahasiswa::find(session('id'));
-        $headers=[
-            'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-            'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan.png")
-        ];
-        $prodi=DB::table('pe3_prodi')
-        ->where('config','=',$formulir->kodeprodi_satu)
-        ->first();
+        try {
+            // Cari berdasarkan nomor pendaftaran dengan relasi prodi
+            $formulir = Neomahasiswa::with(['prodiRelation'])
+                ->where('nomor_pendaftaran', $file)
+                ->firstOrFail();
 
-        
+            // Validasi data prodi
+            if(!$formulir->kodeprodi_satu || !$formulir->prodiRelation) {
+                throw new Exception('Data prodi tidak valid atau belum terdaftar');
+            }
 
-        $pdf = Pdf::loadView('report.surat',['headers' => $headers,'formulir'=>$formulir,'prodi'=>$prodi,'tanggal'=>AkademikHelpers::tanggal('d F Y')]);
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf',$content);
-        return response()->file(storage_path('app/public/exported/pdf/'.$file.'.pdf'));
+            // Siapkan header
+            $headers = [
+                'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+                'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png")
+            ];
+
+            $viewName = ($formulir->prodiRelation->nama_jenjang == 'S-2') 
+                ? 'report.surat_s2' 
+                : 'report.surat_s1';
+
+            $pdf = Pdf::loadView($viewName, [
+                'headers' => $headers,
+                'formulir' => $formulir,
+                'prodi' => $formulir->prodiRelation,
+                'tanggal' => AkademikHelpers::tanggal('d F Y')
+            ]);
+
+            return $pdf->stream("Surat_Kelulusan_{$file}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
     }
 
     public function formmaba()

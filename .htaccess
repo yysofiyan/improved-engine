@@ -26,7 +26,7 @@
 </IfModule>
 
 # ================== PROTEKSI TAMBAHAN ================== #
-<IfModule mod_headers.c>
-    # Blokir embed dari domain judi
-    Header set Content-Security-Policy "default-src 'self'; frame-src 'none'; frame-ancestors 'self'; form-action 'self'"
-</IfModule>
+# <IfModule mod_headers.c>
+#     # Blokir embed dari domain judi
+#     Header set Content-Security-Policy "default-src 'self'; frame-src 'none'; frame-ancestors 'self'; form-action 'self'"
+# </IfModule>

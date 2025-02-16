@@ -13,7 +13,7 @@ use App\Models\Neomahasiswa;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\AkademikHelpers;
-use Mews\Captcha\Facades\Captcha;
+use Mews\Captca\Facades\Captcha;
 use Illuminate\Support\Facades\DB;
 use App\Models\KonfirmasiPembayaran;
 use Illuminate\Support\Facades\Auth;
@@ -79,9 +79,9 @@ class MabaController extends Controller
 
     public function home()
     {
-        $pendaftar=Neomahasiswa::select(DB::raw('*'))
-        ->where('id',session('id'))
-        ->first();
+        $pendaftar = Neomahasiswa::with(['prodi'])
+            ->where('id', session('id'))
+            ->first();
 
         $soal=DB::table('quiz_murid')
         ->where('murid_id',session('id'))
@@ -217,6 +217,7 @@ class MabaController extends Controller
 
     }
 
+    
     public function cekUjian(Request $request)
     {
         $request->validate([
@@ -550,9 +551,8 @@ class MabaController extends Controller
 
     public function updateMhs(Request $request)
     {
-
         $request->validate([
-            'nisn' => 'required|min:10|max:10',
+            'nisn' => 'sometimes|nullable|min:10|max:10',
             'nik' => 'required|min:16|max:16',
             'nama_mahasiswa' => 'required',
             'nama_ibu_kandung' => 'required',
@@ -568,16 +568,13 @@ class MabaController extends Controller
             'tahun_lulus' => 'required',
             'kode_pt_asal' => '',
             'kode_prodi_asal' => '',
+            'instansi' => 'sometimes|nullable|max:255',
             'catatan' => '',
             'kodeprodi_satu' => 'required',
             'kodeprodi_dua' => 'required',
-            'jenis_daftar' => 'required',
-            'kodewilayah'=>'',
-            'kewarganegaraan'=>'required',
+            'kewarganegaraan' => 'required',
             'konfirmasi' => 'required',
         ]);
-
-
 
         try {
             Neomahasiswa::updateOrCreate([
@@ -602,6 +599,7 @@ class MabaController extends Controller
                 'tahun_lulus'=>$request->tahun_lulus,
                 'kode_pt_asal'=>$request->kode_pt_asal,
                 'kode_prodi_asal'=>$request->kode_prodi_asal,
+                'instansi'=>$request->instansi,
                 'negara'=>$request->negara,
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
@@ -673,7 +671,7 @@ class MabaController extends Controller
         ->where('pin',session('pin'))
         ->first();
 
-        if ($pendaftar->jenis_daftar=='1')
+        if ($pendaftar->jenis_daftar == 2 || $pendaftar->jenis_daftar == 6)
         {
             if (AkademikHelpers::getFakultas($pendaftar->kodeprodi_satu)=='13')
             {
@@ -719,8 +717,8 @@ class MabaController extends Controller
                 'ktm'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional sebagai bukti status mahasiswa
                 'screen_pddikti'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk verifikasi data PDDikti
                 'surat_pindah'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk proses transfer
-                'ijasah_lanjutan'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk ijazah tambahan
-                'transkrip_nilai'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk melihat nilai lengkap
+                'ijasah_lanjutan'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional jika ada ijazah tambahan
+                'transkrip_nilai'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk melihat nilai lengkap
             ]);
 
 
@@ -957,68 +955,83 @@ class MabaController extends Controller
 
     public function printpdf($id)
     {
-        $formulir = Neomahasiswa::find($id)->select(
-            'id',
-            'nomor_pendaftaran',
-            'nama_mahasiswa',
-            'asal_perguruan_tinggi',
-            'jenis_daftar',
-            'kode_pt_asal',
-            'kodeprodi_satu'
-        )->first();
-        $headers = [
-            'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
-            'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
-        ];
-        
-        $prodi = DB::table('pe3_prodi')
-            ->where('config', $formulir->kodeprodi_satu)
-            ->first();
+        try {
+            // Ambil data formulir dengan kolom tertentu
+            $formulir = Neomahasiswa::findOrFail($id)->select(
+                'id',
+                'nomor_pendaftaran',
+                'nama_mahasiswa', 
+                'asal_perguruan_tinggi',
+                'jenis_daftar',
+                'kode_pt_asal',
+                'kodeprodi_satu'
+            )->first();
 
-        // Tambahkan kondisi berdasarkan jenjang prodi
-        $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+            // Siapkan header untuk PDF
+            $headers = [
+                'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+                'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
+            ];
 
-        $pdf = Pdf::loadView($viewName, [
-            'headers' => $headers,
-            'formulir' => $formulir,
-            'prodi' => $prodi,
-            'tanggal' => AkademikHelpers::tanggal('d F Y')
-        ]);
-        
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
-        
-        return $pdf->stream('Surat-Kelulusan.pdf');
+            // Cari data prodi berdasarkan kode prodi
+            $prodi = DB::table('pe3_prodi')
+                ->where('config', $formulir->kodeprodi_satu)
+                ->first();
+
+            // Validasi data prodi
+            if(!$prodi) {
+                throw new Exception('Data prodi tidak ditemukan');
+            }
+
+            // Tentukan view berdasarkan jenjang prodi
+            $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+
+            // Generate PDF
+            $pdf = Pdf::loadView($viewName, [
+                'headers' => $headers,
+                'formulir' => $formulir,
+                'prodi' => $prodi,
+                'tanggal' => now()->format('d F Y')
+            ]);
+
+            // Simpan PDF ke storage
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
+
+            // Stream PDF ke browser
+            return $pdf->stream("Surat_Kelulusan_{$formulir->nomor_pendaftaran}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
     }
 
     public function downloadpdf($file)
     {
-        $formulir = Neomahasiswa::find(session('id'));
-        $headers = [
-            'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
-            'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
-        ];
-        
-        $prodi = DB::table('pe3_prodi')
-            ->where('config', $formulir->kodeprodi_satu)
-            ->first();
+        try {
+            $formulir = Neomahasiswa::findOrFail(session('id'));
+            $prodi = DB::table('pe3_prodi')
+                ->where('config', $formulir->kodeprodi_satu)
+                ->first();
 
-        // Gunakan kondisi yang sama
-        $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+            // Validasi data prodi
+            if(!$prodi) {
+                throw new Exception('Data prodi tidak ditemukan');
+            }
 
-        $pdf = Pdf::loadView($viewName, [
-            'headers' => $headers,
-            'formulir' => $formulir,
-            'prodi' => $prodi,
-            'tanggal' => AkademikHelpers::tanggal('d F Y')
-        ]);
-        
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf', $content);
-        
-        return response()->download(storage_path('app/public/exported/pdf/'.$file.'.pdf'));
+            $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+
+            $pdf = Pdf::loadView($viewName, [
+                'formulir' => $formulir,
+                'prodi' => $prodi,
+                'tanggal' => now()->format('d F Y')
+            ]);
+
+            return $pdf->stream("Surat_Kelulusan_{$formulir->nomor_pendaftaran}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal generate PDF: '.$e->getMessage());
+        }
     }
-
-
 
 }

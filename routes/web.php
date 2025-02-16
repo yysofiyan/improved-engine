@@ -16,6 +16,7 @@ use App\Http\Controllers\SecondDatabaseController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,7 +152,8 @@ Route::middleware('authYPSA')->group(function() {
         Route::get('/dashboard', [SuperadminController::class, 'index'])->name('admin.dashboard');
 
         Route::get('/camaba', [SuperadminController::class, 'camaba'])->name('admin.camaba');
-        Route::get('/lihatpdf/{id}', [SuperadminController::class, 'lihatpdf']);
+        Route::get('/lihatpdf/{nomor_pendaftaran}', [SuperadminController::class, 'lihatpdf'])
+            ->name('admin.lihatpdf');
         Route::get('/lihat/{id}', [SuperadminController::class, 'lihatPin'])->name('admin.lihatpin');
         Route::get('/form-maba', [SuperadminController::class, 'formmaba'])->name('admin.formmaba');
         Route::post('/update-mhs', [SuperadminController::class, 'updateMhs'])->name('admin.updatemaba');
@@ -439,6 +441,10 @@ Route::middleware('googleauth')->group(function() {
 
 
 });
+
+// Tambahkan route khusus untuk S2
+Route::get('/downloadpdf-s2/{nomor_pendaftaran}', [MabaController::class, 'downloadpdf'])
+    ->name('downloadpdf.s2');
 
 
 
