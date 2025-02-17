@@ -154,7 +154,8 @@
                   <tr>
                     <td></td>
                     <td>Pendidikan Bahasa Indonesia(S2)</td>
-                    <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar('8813') }} </td>
+                    <td class="text-center">  
+                    {{ \App\Helpers\AkademikHelpers::getDaftar2('8813') .' - '.\App\Helpers\AkademikHelpers::getDaftar('8813') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin('8813') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus('8813') }}</td>
                     
