@@ -9,7 +9,7 @@ This is a web-based application for UNSAP's student admission process (PMB) for 
 ## Getting Started
 
 ### Prerequisites
-* XAMPP/MAMP/WAMP Server
+* ServBay/MAMP/WAMP Server
 * Composer
 * PHP >= 8.1.4
 
