@@ -61,21 +61,20 @@
 </div>
 <div class="row">
     <div class="col-md-6 grid-margin stretch-card">
-      <div class="card tale-bg">
-        <div class="card-people mt-auto">
-            <img src="{{ url('images/student.svg') }}" alt="people">
-          <div class="weather-info">
-            <div class="d-flex">
-              <div>
-               
-              </div>
-              <div class="ml-2">
-                
-              </div>
+        <div class="card tale-bg">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="card-title">Statistik Pendaftaran</h4>
+                        <canvas id="pendaftaranChart" height="150"></canvas>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h4 class="card-title">Distribusi Pendaftar Per Fakultas</h4>
+                        <canvas id="topFakultasChart" height="150"></canvas>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
     <div class="col-md-6 grid-margin transparent">
       <div class="row">
@@ -83,7 +82,7 @@
           <div class="card card-tale">
             <div class="card-body">
               <p class="mb-4">Pendaftar Hari Ini</p>
-              <p class="fs-30 mb-2">{{ number_format($pendaftarHariIni,0)}}</p>
+              <span id="pendaftar-hari-ini">{{ number_format($pendaftarHariIni,0) }}</span>
             
             </div>
           </div>
@@ -92,7 +91,7 @@
           <div class="card card-dark-blue">
             <div class="card-body">
               <p class="mb-4">Total Pendaftar</p>
-              <p class="fs-30 mb-2">{{ number_format($totalPendaftar,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getTotalDaftar(),0)}}</p>
               
             </div>
           </div>
@@ -103,7 +102,7 @@
           <div class="card card-light-blue">
             <div class="card-body">
               <p class="mb-4">Jumlah Calon MABA</p>
-              <p class="fs-30 mb-2">{{ number_format($totalLulus,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getTotalLulus(),0)}}</p>
              
             </div>
           </div>
@@ -112,7 +111,7 @@
           <div class="card card-light-danger">
             <div class="card-body">
               <p class="mb-4">Jumlah PIN Aktif</p>
-              <p class="fs-30 mb-2">{{ number_format($totalPin,0)}}</p>
+              <p class="fs-30 mb-2">{{ number_format(\App\Helpers\AkademikHelpers::getJumlahPin(),0)}}</p>
              
             </div>
           </div>
@@ -126,10 +125,10 @@
       <div class="card">
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
          <div class="d-flex justify-content-between">
-          <p class="card-title">Rekap Pendaftaran PMB</p>
-          <a href="#" class="text-info">Lihat</a>
+          <p class="card-title">Rekap Pendaftaran PMB Tahun {{ date('Y') }}</p>
+          <a href="#" class="text-info">Pertanggal : {{ date('Y-m-d') }}</a>
          </div>
-          <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP 2024</p>
+          <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP</p> 
           <div class="table-responsive">
             <table id="refMember" class="display expandable-table table-hover" style="width:100%">
                 <thead>
@@ -390,9 +389,9 @@
                   <div class="col-md-12 col-xl-3 d-flex flex-column justify-content-start">
                     <div class="ml-xl-4 mt-3">
                     <p class="card-title">Rekap Pendaftaran</p>
-                      <h1 class="text-primary">{{ number_format($totalLulus,0)}} Maba</h1>
+                      <h1 class="text-primary">{{ number_format(\App\Helpers\AkademikHelpers::getTotalLulus(),0)}} Maba</h1>
                       
-                      <p class="mb-2 mb-xl-0">Jumlah MABA yang sudah resmi menjadi calon Mahasiswa Baru UNSAP 2024</p>
+                      <p class="mb-2 mb-xl-0">Jumlah MABA yang sudah resmi menjadi calon Mahasiswa Baru UNSAP {{ date('Y') }}</p>
                     </div>  
                     </div>
                   <div class="col-md-12 col-xl-9">
@@ -404,7 +403,10 @@
                               <td class="text-muted">Fakultas FKIP</td>
                               <td class="w-100 px-0">
                                 <div class="progress progress-md mx-4">
-                                  <div class="progress-bar bg-primary" role="progressbar" style="width: {{ \App\Helpers\AkademikHelpers::getLulusPersen(['5b3ff355-1e20-4c1d-8b47-e559b6991036','f48cbc83-b3c6-4e66-9e68-209b52a275e4','eca49026-745e-451c-8121-bfc81d4e9fe4','adc77657-6904-4aa3-bc6e-40565bdc27bf','5f69f4f0-ebbb-4638-8df1-4632b05326de','2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3','8813','84102']) }}"></div>
+                                  <div class="progress-bar bg-primary" role="progressbar" 
+                                       style="width: {{ \App\Helpers\AkademikHelpers::getLulusPersen(['5b3ff355-1e20-4c1d-8b47-e559b6991036','f48cbc83-b3c6-4e66-9e68-209b52a275e4','eca49026-745e-451c-8121-bfc81d4e9fe4','adc77657-6904-4aa3-bc6e-40565bdc27bf','5f69f4f0-ebbb-4638-8df1-4632b05326de','2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3','8813','84102']) }}"
+                                       aria-valuemax="{{ collect(['5b3ff355-1e20-4c1d-8b47-e559b6991036','f48cbc83-b3c6-4e66-9e68-209b52a275e4','eca49026-745e-451c-8121-bfc81d4e9fe4','adc77657-6904-4aa3-bc6e-40565bdc27bf','5f69f4f0-ebbb-4638-8df1-4632b05326de','2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3','8813','84102'])->sum(fn($id) => config('pmb.kapasitas_prodi.'.$id, 0)) }}">
+                                  </div>
                                 </div>
                               </td>
                               <td><h5 class="font-weight-bold mb-0">{{ \App\Helpers\AkademikHelpers::getLulusFakultas(['5b3ff355-1e20-4c1d-8b47-e559b6991036','f48cbc83-b3c6-4e66-9e68-209b52a275e4','eca49026-745e-451c-8121-bfc81d4e9fe4','adc77657-6904-4aa3-bc6e-40565bdc27bf','5f69f4f0-ebbb-4638-8df1-4632b05326de','2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3','8813','84102']) }}</h5></td>
@@ -525,10 +527,8 @@
       var areaData = {
         labels: ["Pendaftar Offline", "Pendaftar Online"],
         datasets: [{
-            data: [{{number_format($totalPendaftarOffline,0)}}, {{number_format($totalPendaftarOnline,0)}}],
-            backgroundColor: [
-              "#FFC100", "#248AFD",
-            ],
+            data: [{{ $totalPendaftarOffline }}, {{ $totalPendaftarOnline }}],
+            backgroundColor: ["#FFC100", "#248AFD"],
             borderColor: "rgba(0,0,0,0)"
           }
         ]
@@ -553,10 +553,10 @@
           var text = [];
           text.push('<div class="report-chart">');
             text.push('<div class="d-flex justify-content-between mx-4 mx-xl-5 mt-3"><div class="d-flex align-items-center"><div class="mr-3" style="width:20px; height:20px; border-radius: 50%; background-color: ' + chart.data.datasets[0].backgroundColor[0] + '"></div><p class="mb-0">Pendaftar Offline</p></div>');
-            text.push('<p class="mb-0">{{number_format($totalPendaftarOffline,0)}}</p>');
+            text.push('<p class="mb-0">' + chart.data.datasets[0].data[0].toLocaleString('id-ID') + '</p>');
             text.push('</div>');
             text.push('<div class="d-flex justify-content-between mx-4 mx-xl-5 mt-3"><div class="d-flex align-items-center"><div class="mr-3" style="width:20px; height:20px; border-radius: 50%; background-color: ' + chart.data.datasets[0].backgroundColor[1] + '"></div><p class="mb-0">Pendaftar Online</p></div>');
-            text.push('<p class="mb-0">{{number_format($totalPendaftarOnline,0)}}</p>');
+            text.push('<p class="mb-0">' + chart.data.datasets[0].data[1].toLocaleString('id-ID') + '</p>');
             text.push('</div>');
             
           text.push('</div>');
@@ -575,7 +575,8 @@
           ctx.textBaseline = "middle";
           ctx.fillStyle = "#000";
       
-          var text = "{{ number_format($totalPendaftar,0)}}",
+          var total = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1];
+          var text = total.toLocaleString('id-ID'),
               textX = Math.round((width - ctx.measureText(text).width) / 2),
               textY = height / 2;
       
@@ -593,4 +594,79 @@
       document.getElementById('south-america-legend').innerHTML = southAmericaChart.generateLegend();
     }
 </script>
+<script>
+    if ($("#pendaftaranChart").length) {
+        const ctx = document.getElementById('pendaftaranChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json(\App\Helpers\AkademikHelpers::getBulanLabels()),
+                datasets: [
+                    {
+                        label: 'Pendaftar 2024',
+                        data: @json($data2024),
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Pendaftar 2025',
+                        data: @json($data2025),
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Chart distribusi Fakultas 2025
+    if ($("#topFakultasChart").length) {
+        const ctx2 = document.getElementById('topFakultasChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: @json(\App\Helpers\AkademikHelpers::getNamaFakultas2025()),
+                datasets: [{
+                    data: @json(\App\Helpers\AkademikHelpers::getDistribusiFakultas2025()),
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                        '#9966FF', '#FF9F40', '#EB3B5A'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.formattedValue} pendaftar`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
 @endpush
+

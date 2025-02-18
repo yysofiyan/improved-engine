@@ -439,6 +439,13 @@ Route::middleware('googleauth')->group(function() {
         
         // Rute untuk melihat detail mahasiswa
         Route::get('/lihatmhs/{id}', [FakultasController::class, 'lihatMhs'])->name('fakultas.lihatmhs');
+
+        // Rute untuk melihat PDF surat kelulusan berdasarkan nomor pendaftaran
+        // Menggunakan metode lihatPdf dari FakultasController
+        // Nomor pendaftaran harus berupa kombinasi huruf kapital dan angka
+        Route::get('/lihatpdf/{nomor_pendaftaran}', [FakultasController::class, 'lihatPdf'])
+            ->name('fakultas.lihatpdf') // Nama rute untuk referensi
+            ->where('nomor_pendaftaran', '[A-Z0-9]+'); // Validasi format nomor pendaftaran
     });
 
 

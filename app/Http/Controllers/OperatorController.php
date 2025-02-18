@@ -72,14 +72,35 @@ class OperatorController extends Controller
             ->orderBy('pe3_fakultas.urut')
             ->get();
 
-            $pendaftarHariIni=Neomahasiswa::where('created_at',Carbon::now())->count();
+            // Hitung jumlah pendaftar hari ini untuk tahun 2025
+            $pendaftarHariIni = Neomahasiswa::whereDate('created_at', today())
+                ->whereYear('created_at', 2025)
+                ->count();
+                
+            // Total semua pendaftar
             $totalPendaftar = Neomahasiswa::count();
-            $totalLulus=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
-            ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-            ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')->count();
-            $totalPin=Neomahasiswa::where('is_aktif','1')->count();
-            $totalPendaftarOnline=Neomahasiswa::WhereNull('id_operator')->count();
-            $totalPendaftarOffline=Neomahasiswa::WhereNotNull('id_operator')->count();
+            
+            // Total mahasiswa yang lulus dengan join tabel prodi dan quiz
+            $totalLulus = Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
+                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
+                ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
+                ->count();
+                
+            // Total PIN yang aktif
+            $totalPin = Neomahasiswa::where('is_aktif','1')->count();
+            
+            // Total pendaftar online (tanpa id operator)
+            $totalPendaftarOnline = Neomahasiswa::whereNull('id_operator')->count();
+            
+            // Total pendaftar offline (dengan id operator) 
+            $totalPendaftarOffline = Neomahasiswa::whereNotNull('id_operator')->count();
+
+        // Ambil data statistik pendaftaran untuk tahun 2024 dan 2025
+        $data2024 = AkademikHelpers::getStatistikPendaftaran2024();
+        $data2025 = AkademikHelpers::getStatistikPendaftaran2025();
+        
+
+            
         return view('operator/dashboard',[
             'prodi' => $prodi,
             'fakultas' => $fakultas,
@@ -88,10 +109,13 @@ class OperatorController extends Controller
             'totalLulus'=>$totalLulus,
             'totalPin'=>$totalPin,
             'totalPendaftarOnline'=>$totalPendaftarOnline,
-            'totalPendaftarOffline'=>$totalPendaftarOffline,
-            'tanggal'=>AkademikHelpers::tanggal('d F Y'),
-            'tanggal1'=>AkademikHelpers::tanggal1('d F Y'),
-            'tanggal2'=>AkademikHelpers::tanggal2('d F Y')
+            'totalPendaftarOffline' => $totalPendaftarOffline,
+            'data2024' => $data2024,
+            'data2025' => $data2025,
+            'tanggal' => AkademikHelpers::tanggal('d F Y'),
+            'tanggal1' => AkademikHelpers::tanggal1('d F Y'),
+            'tanggal2' => AkademikHelpers::tanggal2('d F Y')
+            
         ]);
     }
 

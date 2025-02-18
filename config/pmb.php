@@ -5,4 +5,5 @@ return [
     'end_date' => env('PMB_END', '2026-02-28'),
     'test_start_date' => env('PMB_TEST_START', '2025-01-01'),
     'test_end_date' => env('PMB_TEST_END', '2026-02-28'),
+    'tahun_akademik' => 2025
 ]; 

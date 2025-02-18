@@ -2,14 +2,14 @@
 
 @section('title', 'Dashboard')
 @section('content')
-    @php
+    {{-- @php
         dump([
             'ijasah' => $persyaratan->ijasah ?? null,
             'prodi' => $mhs->prodi ? $mhs->prodi->toArray() : null,
             'soal' => $soal,
             'nisn' => $mhs->nisn
         ]);
-    @endphp
+    @endphp --}}
     <div class="row" style="margin-top:50px;">
         <div class="col-md-12 grid-margin">
             <div class="row">
@@ -331,8 +331,8 @@
                                                         <small class="text-muted">Tidak wajib untuk:
                                                             <ul>
                                                                 <li>Program Pascasarjana (S2)</li>
-                                                                <li>Mahasiswa Pindahan</li>
-                                                                <li>Mahasiswa Lanjutan</li>
+                                                                {{-- <li>Mahasiswa Pindahan</li>
+                                                                <li>Mahasiswa Lanjutan</li> --}}
                                                             </ul>
                                                         </small>
                                                     @endif
@@ -801,7 +801,10 @@
 
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('file') has-danger @enderror">
-                                                <label>Fotocopy STTB/Ijazah SMA/SMK/MA Dilegalisir
+                                                <label>STTB/Ijazah SMA/SMK/MA/Sederajat</label>
+                                                    @if ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2')
+
+                                                    @endif
                                                     @if ($mhs->jenis_daftar == 1 || $mhs->jenis_daftar == 2 || $mhs->jenis_daftar == 6)
                                                         <span class="badge badge-info">Lewati untuk Mahasiswa
                                                             Pindahan/Lanjutan</span>
@@ -1048,7 +1051,7 @@
                                             ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2' && $persyaratan->ijasah) || 
                                             
                                             // Untuk non-S2 wajib NISN
-                                            ($persyaratan->ijasah && !empty($mhs->nisn))
+                                            (!empty($mhs->nisn))
                                         ) 
                                         && $soal == 0
                                     )

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Helpers\AkademikHelpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FakultasController extends Controller
 {
@@ -43,9 +44,23 @@ class FakultasController extends Controller
             ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
             ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')->count();
             $totalPin=Neomahasiswa::where('is_aktif','1')->count();
-            $totalPendaftarOnline=Neomahasiswa::WhereNull('id_operator')->count();
-            $totalPendaftarOffline=Neomahasiswa::WhereNotNull('id_operator')->count();
-        return view('fakultas/dashboard',[ 
+            // Menghitung total pendaftar online dan offline untuk tahun 2025
+            // Mengambil total pendaftar online dan offline untuk tahun 2025
+            $tahunSekarang = date('Y');
+
+            $totalPendaftarOnline = Neomahasiswa::whereYear('created_at', $tahunSekarang)
+                ->where('jenis_daftar', 'Online')
+                ->count();
+                
+            $totalPendaftarOffline = Neomahasiswa::whereYear('created_at', $tahunSekarang)
+                ->where('jenis_daftar', 'Offline')
+                ->count();
+                
+            $tahun = 2024; // atau ambil dari request
+            $data2024 = AkademikHelpers::getStatistikPendaftaran2024();
+            $data2025 = AkademikHelpers::getStatistikPendaftaran2025();
+
+            return view('fakultas/dashboard', [
             'prodi' => $prodi,
             'prodi_list' => $prodi_list,
             'fakultas' => $fakultas,
@@ -55,6 +70,8 @@ class FakultasController extends Controller
             'totalPin'=>$totalPin,
             'totalPendaftarOnline'=>$totalPendaftarOnline,
             'totalPendaftarOffline'=>$totalPendaftarOffline,
+            'data2024' => $data2024,
+            'data2025' => $data2025,
         ]);
     }
 
@@ -387,5 +404,55 @@ class FakultasController extends Controller
             return redirect('/fakultas/pendaftaran')->with('error', 'Terdapat Kesalahan');
         }
 
+    }
+
+    public function lihatPdf($nomor_pendaftaran)
+    {
+        try {
+            // 1. Ambil data mahasiswa beserta relasi prodi
+            $mahasiswa = Neomahasiswa::with(['prodiRelation'])
+                ->where('nomor_pendaftaran', $nomor_pendaftaran)
+                ->firstOrFail();
+
+            // 2. Validasi akses fakultas berdasarkan prodi yang diizinkan
+            $allowedProdi = session('l_prodi') ?? [];
+            if(!in_array($mahasiswa->kodeprodi_satu, $allowedProdi)) {
+                throw new Exception('Anda tidak memiliki akses untuk melihat data prodi ini');
+            }
+
+            // 3. Pastikan data prodi tersedia
+            if(!$mahasiswa->prodiRelation) {
+                throw new Exception('Data program studi tidak ditemukan');
+            }
+
+            // 4. Tentukan template PDF berdasarkan jenjang studi
+            $viewName = ($mahasiswa->prodiRelation->nama_jenjang == 'S-2') 
+                ? 'report.surat_s2' 
+                : 'report.surat_s1';
+
+            // 5. Siapkan path untuk gambar header dan tanda tangan
+            $headerPath = public_path('images/header_pmb2025.png');
+            $ttdPath = public_path('images/tanda_tangan2025.png');
+
+            // 6. Generate dan tampilkan PDF
+            $pdf = PDF::loadView($viewName, [
+                'formulir' => $mahasiswa,
+                'prodi' => $mahasiswa->prodiRelation,
+                'tanggal' => now()->format('d F Y'),
+                'header_img' => $headerPath,
+                'ttd_img' => $ttdPath
+            ]);
+
+            return $pdf->stream("Surat_Kelulusan_{$nomor_pendaftaran}.pdf");
+
+        } catch (\Exception $e) {
+            // Tangani error dan redirect dengan pesan error
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
+        } catch (\Throwable $th) {
+            // Tangani error yang tidak terduga dan redirect dengan pesan error
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
+        }
     }
 }

@@ -676,7 +676,7 @@ class MabaController extends Controller
             if (AkademikHelpers::getFakultas($pendaftar->kodeprodi_satu)=='13')
             {
                 $request->validate([
-                    'ijasah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
+                    'ijasah'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
                     'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
                     'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
                     'ket_sehat'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
@@ -684,7 +684,7 @@ class MabaController extends Controller
             }else
             {
                 $request->validate([
-                    'ijasah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
+                    'ijasah'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
                     'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
                     'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
                 ]);
@@ -734,8 +734,17 @@ class MabaController extends Controller
                 $id_persyaratan=$request->id_persyaratan;
             }
 
-            $fileIjasah = 'Ijasah_'.time().'.'.$request->ijasah->extension();
-            $request->ijasah->move(public_path('images/persyaratan'), $fileIjasah);
+            // Cek apakah file ijazah diupload
+            if ($request->hasFile('ijasah')) {
+                // Generate nama file unik dengan format: Ijasah_timestamp.extension
+                $fileIjasah = 'Ijasah_'.time().'.'.$request->ijasah->extension();
+                
+                // Pindahkan file ijazah ke folder public/images/persyaratan
+                $request->ijasah->move(public_path('images/persyaratan'), $fileIjasah);
+            } else {
+                // Jika tidak ada file ijazah diupload, set nilai null
+                $fileIjasah = null;
+            }
 
             $fileKtp = 'Ktp_'.time().'.'.$request->ktp_kk->extension();
             $request->ktp_kk->move(public_path('images/persyaratan'), $fileKtp);

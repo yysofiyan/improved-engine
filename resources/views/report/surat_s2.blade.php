@@ -7,7 +7,7 @@ ini_set('memory_limit', '256M');
 <head>
     <style>
         @page {
-            size: A4;
+            size: Legal;
             margin: 2.5cm 1.5cm;
         }
 
@@ -93,9 +93,18 @@ ini_set('memory_limit', '256M');
                 <td>{{ strtoupper($formulir->nama_mahasiswa) }}</td>
             </tr>
             <tr>
+                <td><strong>NIK</strong></td>
+                <td style="padding-left: 20px">:</td>
+                <td>{{ $formulir->nik }}</td>
+            </tr>
+                <td><strong>PIN Aktif</strong></td>
+                <td style="padding-left: 20px">:</td>
+                <td><strong>{{ $formulir->pin }}</strong></td>
+            </tr>
+            <tr>
                 <td><strong>Nomor Pendaftaran</strong></td>
                 <td style="padding-left: 20px">:</td>
-                <td>{{ $formulir->nomor_pendaftaran }}</td>
+                <td>{{ $formulir->nomor_pendaftaran ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td><strong>Asal Perguruan Tinggi</strong></td>
@@ -154,7 +163,7 @@ ini_set('memory_limit', '256M');
    
 
     <!-- Informasi PMB Pascasarjana -->
-    <div style="text-align: justify; width: 100%; max-width: 700px; font-size: 12px; line-height: 1.5">
+    <div style="text-align: justify; width: 100%; max-width: 700px; font-size: 12px; line-height: 1.8">
         <p><strong>INFORMASI PMB 2025 / 2026:</strong></p>
         <ol>
             <li>
@@ -173,9 +182,9 @@ ini_set('memory_limit', '256M');
     </div>
     
     <!-- Tanggal Surat -->
-    <div class="footer-surat">
-        <p>Sumedang, {{ date('d F Y') }}</p>
-        <img src="{{ public_path('images/tanda_tangan2025.png') }}" style="max-width: 600px; height: auto;">
+    <div class="footer-surat" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px; text-align: center; width: 100%; position: absolute; bottom: 2.5cm;">
+        <p style="margin-bottom: 10px;">Sumedang, {{ date('d F Y') }}</p>
+        <img src="{{ public_path('images/tanda_tangan2025.png') }}" style="max-width: 700px; height: auto; margin-top: 10px;">
     </div>
 
     <!-- Halaman Baru untuk Rincian Pembayaran -->

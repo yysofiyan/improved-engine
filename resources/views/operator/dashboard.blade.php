@@ -48,30 +48,29 @@
                     </div>
                     <div class="text-left">
                         <button type="submit" class="btn btn-primary" id="btnImport">Proses</button>
+                      </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card tale-bg">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 class="card-title">Statistik Pendaftaran</h4>
+                            <canvas id="pendaftaranChart" height="150"></canvas>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <h4 class="card-title">Distribusi Pendaftar Per Fakultas Tahun {{ date('Y') }}</h4>
+                            <canvas id="topFakultasChart" height="150"></canvas>
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6 grid-margin stretch-card">
-      <div class="card tale-bg">
-        <div class="card-people mt-auto">
-            <img src="{{ url('images/student.svg') }}" alt="people">
-          <div class="weather-info">
-            <div class="d-flex">
-              <div>
-               
-              </div>
-              <div class="ml-2">
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="col-md-6 grid-margin transparent">
       <div class="row">
         <div class="col-md-6 mb-4 stretch-card transparent">
@@ -153,13 +152,11 @@
 
                   <tr>
                     <td></td>
-                    <td>Pendidikan Bahasa Indonesia(S2)</td>
-                    <td class="text-center">  
-                    {{ \App\Helpers\AkademikHelpers::getDaftar2('8813') .' - '.\App\Helpers\AkademikHelpers::getDaftar('8813') }} </td>
+                    <td>Pendidikan Bahasa Indonesia (S2)</td>
+                    <td class="text-center">{{ \App\Helpers\AkademikHelpers::getDaftar('8813') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin('8813') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus('8813') }}</td>
-                    
-                  </tr> 
+                  </tr>
 
                   <tr>
                     <td></td>
@@ -747,26 +744,106 @@
     }
 </script>
 <script>
-    $('.btn-export').click(function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: "{{ route('export.pendaftaran') }}",
-            method: 'GET',
+    // Chart Statistik Pendaftaran 2024 dan 2025
+    if ($("#pendaftaranChart").length) {
+        const ctx = document.getElementById('pendaftaranChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
             data: {
-                tahun: 2025
+                labels: @json(\App\Helpers\AkademikHelpers::getBulanLabels()),
+                datasets: [
+                    {
+                        label: 'Pendaftar 2024',
+                        data: @json($data2024),
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Pendaftar 2025',
+                        data: @json($data2025),
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Chart distribusi Fakultas 2025
+    if ($("#topFakultasChart").length) {
+        const ctx2 = document.getElementById('topFakultasChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: @json(\App\Helpers\AkademikHelpers::getNamaFakultas2025()),
+                datasets: [{
+                    data: @json(\App\Helpers\AkademikHelpers::getDistribusiFakultas2025()),
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                        '#9966FF', '#FF9F40', '#EB3B5A'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.formattedValue} pendaftar`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+<script>
+    // Menangani klik tombol export
+    $('.btn-export').click(function(e) {
+        e.preventDefault(); // Mencegah perilaku default
+        
+        // Mengirim permintaan AJAX untuk export data
+        $.ajax({
+            url: "{{ route('export.pendaftaran') }}", // URL endpoint export
+            method: 'GET', // Metode HTTP GET
+            data: {
+                tahun: 2025 // Mengirim parameter tahun 2025
             },
             xhrFields: {
-                responseType: 'blob'
+                responseType: 'blob' // Mengatur response sebagai blob
             },
             success: function(response) {
+                // Membuat blob dari response
                 var blob = new Blob([response]);
+                // Membuat elemen link untuk download
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = 'rekap_pendaftaran_2025.xlsx';
-                link.click();
+                link.download = 'rekap_pendaftaran_2025.xlsx'; // Nama file download
+                link.click(); // Memicu download
             },
             error: function(xhr) {
+                // Menangani error dan menampilkan di console
                 console.log(xhr.responseText);
             }
         });

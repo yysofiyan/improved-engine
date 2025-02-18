@@ -267,27 +267,45 @@ class AkademikHelpers {
         return $pendaftar;        
     }
 
+    /**
+     * Mendapatkan jumlah mahasiswa yang lulus seleksi PMB
+     */
     public static function getLulusFakultas($kode)
     {
-        $pendaftar=Neomahasiswa::select(DB::raw('*'))
-        ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
-        ->whereIn('kodeprodi_satu',$kode)
-        ->where('quiz_murid.status','=','1')
-        ->count();        
-
+        $pendaftar = Neomahasiswa::select(DB::raw('*'))
+            ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
+            ->whereIn('kodeprodi_satu', $kode)
+            ->whereYear('neomahasiswas.created_at', 2025) // Filter tahun 2025
+            ->where('quiz_murid.status', '=', '1')
+            ->count();
+            
         return $pendaftar;        
     }
 
     public static function getLulusPersen($kode)
     {
-        $pendaftar=Neomahasiswa::select(DB::raw('*'))
-        ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
-        ->whereIn('kodeprodi_satu',$kode)
-        ->where('quiz_murid.status','=','1')
-        ->count();        
-        $persen=($pendaftar/250)*100;
+        if(!is_array($kode) || empty($kode)) {
+            return '0.00%';
+        }
 
-        return number_format($persen,0).'%';        
+        // Hitung total kapasitas dari config
+        $totalKapasitas = collect($kode)->sum(function ($prodiId) {
+            return config("pmb.kapasitas_prodi.$prodiId", 0);
+        });
+
+        // Hitung jumlah pendaftar TAHUN 2025
+        $pendaftar = Neomahasiswa::query()
+            ->join('quiz_murid', 'quiz_murid.murid_id', '=', 'neomahasiswas.id')
+            ->whereIn('kodeprodi_satu', $kode)
+            ->whereYear('created_at', 2025) // Filter tahun 2025
+            ->where('quiz_murid.status', '1')
+            ->count();
+
+        $totalKapasitas = $totalKapasitas > 0 ? $totalKapasitas : 1;
+        
+        $persen = ($pendaftar / $totalKapasitas) * 100;
+        
+        return number_format($persen, 2) . '%';
     }
 
     /**
@@ -652,11 +670,88 @@ class AkademikHelpers {
                             'Desember'
                         ], $result);
     } 
-
+    /**
+     * Mendapatkan jumlah pendaftar hari ini untuk tahun 2025
+     * 
+     * @return int Jumlah pendaftar hari ini
+     */
     public static function getDaftarHariIni() {
         return Neomahasiswa::whereDate('created_at', today())
             ->whereYear('created_at', 2025)
             ->count();
+    }
+
+    /**
+     * Mendapatkan statistik pendaftaran per bulan untuk tahun 2025
+     * 
+     * @return array Array berisi jumlah pendaftar per bulan (Jan-Des)
+     */
+    public static function getStatistikPendaftaran2025()
+    {
+        $data = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $data[] = Neomahasiswa::whereYear('created_at', 2025)
+                ->whereMonth('created_at', $month)
+                ->count();
+        }
+        return $data;
+    }
+
+    /**
+     * Mendapatkan distribusi pendaftar per fakultas untuk tahun 2025
+     * 
+     * @return array Array berisi jumlah pendaftar per fakultas
+     */
+    public static function getDistribusiFakultas2025()
+    {
+        return [
+            self::getLulusFakultas(['5b3ff355-1e20-4c1d-8b47-e559b6991036','f48cbc83-b3c6-4e66-9e68-209b52a275e4','eca49026-745e-451c-8121-bfc81d4e9fe4','adc77657-6904-4aa3-bc6e-40565bdc27bf','5f69f4f0-ebbb-4638-8df1-4632b05326de','2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3','8813','84102']), // FKIP
+            self::getLulusFakultas(['1ff84166-cc64-48aa-a38e-3c6a952a8b90','08b181bc-1860-4c7e-8bda-ef4fbd59d869','8c56f8a8-8f27-4e2f-8376-a433b2862f36']), // FEB
+            self::getLulusFakultas(['d778be91-7bc7-4757-bd22-9038fa8adeb4','e992676b-23e6-49e1-a2f6-81f90876b7da']), // FISIP
+            self::getLulusFakultas(['1daad851-b93f-4860-b37d-ddae33f1b860']), // FIB
+            self::getLulusFakultas(['aaf15037-cd57-4743-a5f8-fd30840f221e','a74fffa1-43f1-4ab5-baca-dfbd08b22d20']), // FTI
+            self::getLulusFakultas(['303e6a30-c87a-4f70-8431-8ccc03b058f4','b41b8150-b1e6-4c63-9455-26f91174933c','93366fa0-45df-457c-a723-01b78226ad34']), // FIKES
+            self::getLulusFakultas(['1','2']) // STAI
+        ];
+    }
+
+    /**
+     * Mendapatkan label bulan dalam format singkat (3 huruf)
+     * 
+     * @return array Array berisi nama bulan singkat (Jan-Des)
+     */
+    public static function getBulanLabels()
+    {
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    }
+
+    /**
+     * Mendapatkan nama fakultas untuk tahun 2025
+     * 
+     * @return array Array berisi nama fakultas
+     */
+    public static function getNamaFakultas2025()
+    {
+        return [
+            'FKIP', 'FEB', 'FISIP', 
+            'FIB', 'FTI', 'FIKES', 'STAI SAS'
+        ];
+    }
+
+    /**
+     * Mendapatkan statistik pendaftaran tahun 2024 per bulan
+     * 
+     * @return array Array berisi jumlah pendaftar per bulan (Jan-Des)
+     */
+    public static function getStatistikPendaftaran2024()
+    {
+        $data = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $data[] = Neomahasiswa::whereYear('created_at', 2024)
+                ->whereMonth('created_at', $month)
+                ->count();
+        }
+        return $data;
     }
 
 }

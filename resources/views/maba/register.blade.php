@@ -1,11 +1,29 @@
 @extends('layouts.master-front')
 
 
-@section('title', 'Penerimaan Mahasiswa Baru - UNSAP')
+@section('title', 'Pendaftaran Mahasiswa Baru')
 
 
 @section('content')
-
+<head>
+    <!-- Memuat jQuery versi terbaru -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+        crossorigin="anonymous"></script>
+        
+    <!-- Memuat Bootstrap CSS versi terbaru -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous">
+        
+    <!-- Memuat Font Awesome untuk ikon -->
+    <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer" />
+</head>
 <div class="container-fluid page-body-wrapper full-page-wrapper">
     <div class="content-wrapper d-flex align-items-center auth px-0">
         <div class="row w-100 mx-0">
@@ -18,11 +36,33 @@
                         </div>
                         @endif
 						 <div class="alert alert-error" role="alert">
-                            <a href="{{ url('files/flyer_unsap_2024.pdf') }}" class="btn btn-warning" target="_blank"> <i class="fa-solid fa-receipt fa-fw mr-2"></i> Download Brosur PMB</a>
+                            <!-- <a href="{{ url('files/flyer_unsap_2024.pdf') }}" class="btn btn-warning" target="_blank"> <i class="fa-solid fa-receipt fa-fw mr-2"></i> Download Brosur PMB</a> -->
                         </div>
-                        <h4 class="font-weight-bold">DAFTAR CALON MAHASISWA BARU</h4>
+                        <div class="text-center mb-4">
+                            <div class="d-flex flex-column align-items-center">
+                                <img src="{{ asset('images/logo-importer-mini.png') }}" 
+                                     alt="UNSAP" 
+                                     class="logo mb-3" 
+                                     style="width: 100px; height: auto;">
+                                
+                                <div class="d-flex justify-content-center align-items-center mb-4 text-daintree">
+                                    <div class="text-end pe-3">
+                                        <h6 class="m-0 text-uppercase fw-bold">pmb</h6>
+                                        {{-- <h6 class="m-0 text-uppercase fw-bold">{{ env('TAHUN_AKTIF')}}</h6> --}}
+                                        <h6 class="m-0 text-uppercase fw-bold">{{ date('Y') }}</h6>
+
+                                    </div>
+                                    <div class="border-start border-3 border-warning ps-3">
+                                        <h6 class="m-0 fw-bold">Sistem Penerimaan Mahasiswa Baru</h6>
+                                        <h6 class="m-0 fw-bold">Universitas Sebelas April</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <h6 class="text-center text-muted">Tahun Akademik {{ env('TAHUN_AKTIF') }}/{{ env('TAHUN_AKTIF')+1 }}</h6> -->
                         <hr>
                         <form id="MabaForm" name="MabaForm">
+                            @csrf
                         
                             <div class="form-group">
                                 <label class="font-weight-bold text-uppercase">Nomor Induk Kependudukan (NIK)</label>
@@ -109,7 +149,7 @@
 
                             <div class="form-group">
                                 <label class="font-weight-bold text-uppercase">Masukan Captcha</label>
-                                <input id="captcha" type="text" class="form-control" placeholder="Masukan Captcha" name="captcha">
+                                <input id="captcha" type="text" class="form-control" placeholder="Masukan Captcha" name="captcha" required>
                             </div>
                             
                             <button type="submit" id="saveBtn" class="btn btn-primary"> DAFTAR </button>
@@ -139,14 +179,14 @@
 <script type="text/javascript">
     $(function () {
         $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-    });
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-      $('#saveBtn').click(function (e) {
-          e.preventDefault();
-          $('#saveBtn').html('Mengirim Data ..');
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
+            $('#saveBtn').html('Mengirim Data ..');
 
           $.ajax({
             data: $('#MabaForm').serialize(),
@@ -159,12 +199,11 @@
                     'Pendaftaran Berhasil',
                     'Silahkan klik tombol OK',
                     'success'
-                ).then(function (result) {
-                if (result.value) {
-                    window.location = "maba/dashboard";
-                }
-            })
-                
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('home.maba') }}";
+                    }
+                });
                 $('#saveBtn').html('Daftar');
         
             },
