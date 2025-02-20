@@ -755,14 +755,14 @@
                     {
                         label: 'Pendaftar 2024',
                         data: @json($data2024),
-                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        backgroundColor: 'rgba(255, 192, 203, 0.7)', // Warna pink yang lebih lembut
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     },
                     {
                         label: 'Pendaftar 2025',
                         data: @json($data2025),
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)', // Warna hijau yang lebih lembut
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
                     }
@@ -856,10 +856,10 @@
         });
     }
     
-    // Update pertama kali
+    // Jalankan fungsi update pertama kali saat halaman dimuat
     updatePendaftarHariIni();
     
-    // Update setiap 30 detik
+    // Atur interval untuk memperbarui data setiap 30 detik (30000 milidetik)
     setInterval(updatePendaftarHariIni, 30000);
 </script>
 @endpush

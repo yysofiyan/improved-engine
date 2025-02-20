@@ -48,12 +48,13 @@ class FakultasController extends Controller
             // Mengambil total pendaftar online dan offline untuk tahun 2025
             $tahunSekarang = date('Y');
 
-            $totalPendaftarOnline = Neomahasiswa::whereYear('created_at', $tahunSekarang)
-                ->where('jenis_daftar', 'Online')
+            // Update perhitungan dengan filter tahun 2025
+            $totalPendaftarOnline = Neomahasiswa::whereYear('created_at', 2025)
+                ->whereNull('id_operator')
                 ->count();
-                
-            $totalPendaftarOffline = Neomahasiswa::whereYear('created_at', $tahunSekarang)
-                ->where('jenis_daftar', 'Offline')
+            
+            $totalPendaftarOffline = Neomahasiswa::whereYear('created_at', 2025)
+                ->whereNotNull('id_operator')
                 ->count();
                 
             $tahun = 2024; // atau ambil dari request

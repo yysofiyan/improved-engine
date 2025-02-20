@@ -40,8 +40,21 @@ class SuperadminController extends Controller
             ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
             ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')->count();
             $totalPin=Neomahasiswa::where('is_aktif','1')->count();
-            $totalPendaftarOnline=Neomahasiswa::WhereNull('id_operator')->count();
-            $totalPendaftarOffline=Neomahasiswa::WhereNotNull('id_operator')->count();
+
+            // Update perhitungan dengan filter tahun 2025
+            $totalPendaftarOnline = Neomahasiswa::whereYear('created_at', 2025)
+                ->whereNull('id_operator')
+                ->count();
+            
+            $totalPendaftarOffline = Neomahasiswa::whereYear('created_at', 2025)
+                ->whereNotNull('id_operator')
+                ->count();
+
+            // Tambahkan ini untuk statistik tahun 2024 dan 2025
+            $tahun = 2024;
+            $data2024 = AkademikHelpers::getStatistikPendaftaran2024();
+            $data2025 = AkademikHelpers::getStatistikPendaftaran2025();
+
         return view('admin/dashboard',[ 
             'prodi' => $prodi,
             'fakultas' => $fakultas,
@@ -51,6 +64,8 @@ class SuperadminController extends Controller
             'totalPin'=>$totalPin,
             'totalPendaftarOnline'=>$totalPendaftarOnline,
             'totalPendaftarOffline'=>$totalPendaftarOffline,
+            'data2024' => $data2024,
+            'data2025' => $data2025,
             'tanggal'=>AkademikHelpers::tanggal('d F Y'),
             'tanggal1'=>AkademikHelpers::tanggal1('d F Y'),
             'tanggal2'=>AkademikHelpers::tanggal2('d F Y')
