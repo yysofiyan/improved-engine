@@ -163,7 +163,9 @@ Route::middleware('authYPSA')->group(function() {
 
         Route::get('/transaksi', [SuperadminController::class, 'transaksi'])->name('admin.transaksi');
 
-        Route::get('/konfirmasi-bayar', [SuperadminController::class, 'konfirmasi'])->name('admin.konfirmasi');
+        Route::get('/konfirmasi-bayar', [SuperadminController::class, 'konfirmasi'])->name('konfirmasi-bayar');
+        Route::get('/konfirmasi-bayar/data', [SuperadminController::class, 'konfirmasi'])->name('konfirmasi-bayar.data');
+
         Route::post('/verifikasi/{id}', [SuperadminController::class, 'verifikasi'])->name('admin.verifikasi');
 
         Route::post('/reminder/{id}', [SuperadminController::class, 'reminder'])->name('admin.reminder');
@@ -206,11 +208,10 @@ Route::middleware('authYPSA')->group(function() {
         Route::post('/fakultas', [PenggunaController::class, 'storefakultas']);
         Route::delete('/fakultas/hapus/{id}', [PenggunaController::class, 'hapusfakultas'])->name('fakultas.hapus');
 
-        // Rute untuk mendapatkan data calon mahasiswa baru (CAMABA) 
-        // Menggunakan method camaba dari SuperadminController
-        // Data dikembalikan dalam format JSON untuk keperluan DataTables
-        Route::get('camaba/data', [SuperadminController::class, 'camaba'])
-            ->name('camaba.data'); // Nama rute untuk referensi
+        Route::get('camaba/data', [SuperadminController::class, 'camaba'])->name('camaba.data');
+
+        // Tambahkan route untuk endpoint data transaksi
+        Route::get('/transaksi/data', [SuperadminController::class, 'transaksi'])->name('transaksi.data');
 
     });
 
@@ -496,5 +497,7 @@ Route::get('kelulusan/data', [FakultasController::class, 'kelulusan'])
     ->name('kelulusan.data'); // Nama rute untuk referensi
 
 Route::get('pendaftaran/data', [FakultasController::class, 'pendaftaran'])->name('pendaftaran.data');
+
+Route::get('/admin/transaksi', [SuperadminController::class, 'transaksi'])->name('transaksi');
 
 
