@@ -220,18 +220,48 @@ class KeuanganController extends Controller
 
     
 
-    public function konfirmasi()
+    public function konfirmasi(Request $request)
     {
-        $tahunMasuk = Transaksi::selectRaw('YEAR(tanggal) as tahun')
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->get()
-            ->pluck('tahun');
+        if($request->ajax()) {
+            $getData=KonfirmasiPembayaran::select(DB::raw('konfirmasi_pembayarans.transaksi_id,transaksis.pin,nomor_pendaftaran,nama_mahasiswa,id_channel,total_bayar,bukti_bayar,nomor_pendaftaran,verified,tanggal_bayar,nama_rekening_pengirim'))
+        ->join('transaksis','transaksis.id','=','konfirmasi_pembayarans.transaksi_id')
+        ->join('neomahasiswas','neomahasiswas.pin','=','transaksis.pin')
+        ->get();
+                $data=[];
+                foreach ($getData as $item)
+                {
+                    if (!isset($item['id_channel']))
+                    {
+                        $channelid='0';
+                    }else
+                    {
+                        $channelid=$item['id_channel'];
+                    }
+                    $data[]=[
+                        'id'=>$item['transaksi_id'],
+                        'pin'=>$item['pin'],
+                        'nomor_pendaftaran'=>$item['nomor_pendaftaran'],
+                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
+                        'id_channel'=>$channelid,
+                        'tanggal_bayar'=>$item['tanggal_bayar'],
+                        'nama_rekening_pengirim'=>$item['nama_rekening_pengirim'],
+                        'total_bayar'=>'Rp. '.number_format($item['total_bayar'],0),
+                        'lunas'=> $item['verified'],
+                        'bukti_bayar'=> $item['bukti_bayar'],
+                    ];
+            }
 
-        return view('keuangan.konfirmasi', [
-            'tahunMasuk' => $tahunMasuk,
-            'tahunAktif' => now()->year
-        ]);
+            return Response()->json([
+                'error_code'=>0,
+                'error_desc'=>'',
+                'data'=>$data,
+                'message'=>'fetch data berhasil'
+            ], 200);
+            
+        }
+        
+        
+        return view('keuangan/konfirmasi');
     }
 
     public function buatnim(Request $request)
@@ -369,28 +399,68 @@ class KeuanganController extends Controller
     public function verifikasi($id)
     {
         try {
-            $konfirmasi = KonfirmasiPembayaran::findOrFail($id);
-            $konfirmasi->update(['verified' => 11]);
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+            $transaksi= DB::table('transaksis')
+            ->where('id','=',$id)
+            ->first();
+            $mhs=DB::table('neomahasiswas')
+            ->where('pin','=',$transaksi->pin)
+            ->first();
+
+            Neomahasiswa::updateOrCreate(
+                [ 'pin'=>$transaksi->pin],
+                [
+                    'is_aktif'=>'1',
+                ]
+                );
+
+            Transaksi::updateOrCreate(
+                [
+                    'id' => $id,
+                ],
+                [
+                    'status' => '11',
+                ]
+            );
+    
+            KonfirmasiPembayaran::updateOrCreate(
+                [
+                    'transaksi_id' => $id,
+                ],
+                [
+                    'verified' => '11',
+                ]
+            );
+            $message='Hai, Kak *'.$mhs->nama_mahasiswa.'* , *Selamat PIN Pendaftaran kamu sudah aktif*. %0a%0a%0aLangkah selanjutnya Silahkan Login di alamat : *https://admission.unsap.ac.id/login-maba* %0adengan menggunakan Nomor Handphone dan Pin (*'.$transaksi->pin.'*) lalu isi formulir biodata, upload persyaratan dan Ujian Seleksi Mahasiswa Baru. %0a%0aTerima Kasih :) ';
+           
+            AkademikHelpers::kirimWA('62'.$mhs->handphone,$message);
+            //$res=AkademikHelpers::kirimWAButton('6285220717928');
+            return response()->json(['success'=>'Data Konfirmasi dengan pin='.$transaksi->pin.' Sukses Dikonfirmasi !']);
+        } catch (Exception $e) {
+            return response()->json(['status'=>'200','success'=>$e->getMessage()]);
         }
+        
     }
 
-    public function reminder(Request $request, $id)
+    public function reminder($id)
     {
         try {
-            $konfirmasi = KonfirmasiPembayaran::with('transaksi.neomahasiswa')->findOrFail($id);
-            $nomorWA = $konfirmasi->transaksi->neomahasiswa->no_wa;
-            $pesan = urlencode($request->pesan);
+            $transaksi= DB::table('transaksis')
+            ->where('id','=',$id)
+            ->first();
+            $mhs=DB::table('neomahasiswas')
+            ->where('pin','=',$transaksi->pin)
+            ->first();
+
             
-            // Ganti dengan API WhatsApp Anda
-            $waURL = "https://api.whatsapp.com/send?phone=$nomorWA&text=$pesan";
-            
-            return response()->json(['success' => true, 'redirect' => $waURL]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+            $message='Hai, Kak *'.$mhs->nama_mahasiswa.'* , Mimin mengingatkan nih untuk segera upload bukti pembayaran dengan Login di alamat : *https://admission.unsap.ac.id/login-maba* %0amenggunakan Nomor Handphone *'.$mhs->handphone.'*  dan Pin *'.$transaksi->pin.'* agar Mimin segera mengaktifkan pin setelah upload bukti bayar dan selangkah lagi kaka menjadi Calon Mahasiswa Baru UNSAP.  %0a%0aTerima Kasih :) ';
+           
+            AkademikHelpers::kirimWA('62'.$mhs->handphone,$message);
+            //$res=AkademikHelpers::kirimWAButton('6285220717928');
+            return response()->json(['success'=>'Calon Mahasiswa nama='.$mhs->nama_mahasiswa.' Sukses Dikirim Reminder Pembayaran!']);
+        } catch (Exception $e) {
+            return response()->json(['status'=>'200','success'=>$e->getMessage()]);
         }
+        
     }
 
     public function dashboard()
@@ -418,81 +488,6 @@ class KeuanganController extends Controller
             ->orderBy('bulan')
             ->get()
             ->pluck('total');
-    }
-
-    public function indexKonfirmasi()
-    {
-        $tahunMasuk = Transaksi::selectRaw('YEAR(tanggal) as tahun')
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun');
-
-        return view('keuangan.konfirmasi', [
-            'tahunMasuk' => $tahunMasuk,
-            'tahunAktif' => now()->year
-        ]);
-    }
-
-    public function getDataKonfirmasi(Request $request)
-    {
-        try {
-            $query = KonfirmasiPembayaran::query()
-                ->join('transaksis', 'transaksis.id', '=', 'konfirmasi_pembayarans.transaksi_id')
-                ->join('neomahasiswas', 'neomahasiswas.pin', '=', 'transaksis.pin')
-                ->select(
-                    'konfirmasi_pembayarans.transaksi_id',
-                    'transaksis.pin',
-                    'neomahasiswas.nomor_pendaftaran',
-                    'neomahasiswas.nama_mahasiswa',
-                    'konfirmasi_pembayarans.tanggal_bayar',
-                    'konfirmasi_pembayarans.nama_rekening_pengirim',
-                    'konfirmasi_pembayarans.total_bayar',
-                    'konfirmasi_pembayarans.verified',
-                    'konfirmasi_pembayarans.bukti_bayar'
-                );
-
-            // Filter Tahun
-            if ($request->tahun) {
-                $query->whereYear('konfirmasi_pembayarans.tanggal_bayar', $request->tahun);
-            }
-
-            // Hitung total records
-            $totalRecords = KonfirmasiPembayaran::count();
-            $filteredRecords = $query->count();
-
-            // Pagination
-            $data = $query->skip($request->start)
-                ->take($request->length)
-                ->get()
-                ->map(function($item, $index) use ($request) {
-                    return [
-                        'no' => $request->start + $index + 1,
-                        'id' => $item->transaksi_id,
-                        'pin' => $item->pin,
-                        'nomor_pendaftaran' => $item->nomor_pendaftaran,
-                        'nama_mahasiswa' => $item->nama_mahasiswa,
-                        'tanggal_bayar' => \Carbon\Carbon::parse($item->tanggal_bayar)->format('d/m/Y'),
-                        'nama_rekening_pengirim' => $item->nama_rekening_pengirim,
-                        'total_bayar' => number_format($item->total_bayar, 0, ',', '.'),
-                        'lunas' => $item->verified == 11 ? 'Verifikasi' : 'Belum Verifikasi',
-                        'bukti_bayar' => asset('images/pmb/' . $item->bukti_bayar),
-                    ];
-                });
-
-            return response()->json([
-                'draw' => (int) $request->draw,
-                'recordsTotal' => $totalRecords,
-                'recordsFiltered' => $filteredRecords,
-                'data' => $data
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error getDataKonfirmasi: '.$e->getMessage());
-            return response()->json([
-                "draw" => (int) $request->draw,
-                "error" => "Terjadi kesalahan server"
-            ], 500);
-        }
     }
 
 }

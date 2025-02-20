@@ -498,15 +498,32 @@ Route::get('/api/pendaftar-hari-ini', [OperatorController::class, 'getPendaftarH
 Route::get('kelulusan/data', [FakultasController::class, 'kelulusan'])
     ->name('kelulusan.data'); // Nama rute untuk referensi
 
+// Rute untuk mengambil data pendaftaran
 Route::get('pendaftaran/data', [FakultasController::class, 'pendaftaran'])->name('pendaftaran.data');
 
+// Rute untuk mengakses transaksi admin
 Route::get('/admin/transaksi', [SuperadminController::class, 'transaksi'])->name('transaksi');
 
+// Rute untuk mengakses transaksi keuangan
 Route::get('/keuangan/transaksi', [KeuanganController::class, 'index'])->name('keuangan.transaksi');
+// Rute untuk mengambil data transaksi keuangan
 Route::get('/keuangan/transaksi/data', [KeuanganController::class, 'getDataTransaksi']);
 
+// Rute untuk mengambil data konfirmasi keuangan
 Route::get('/keuangan/konfirmasi/data', [KeuanganController::class, 'getDataKonfirmasi'])
     ->name('keuangan.konfirmasi.data');
+
+Route::get('/vendor/datatables/Indonesian.json', function() {
+    return response()
+        ->file(public_path('vendor/datatables/Indonesian.json'))
+        ->header('Access-Control-Allow-Origin', '*');
+});
+
+Route::put('/keuangan/konfirmasi/{id}/verifikasi', [KeuanganController::class, 'verifikasi'])
+     ->name('keuangan.konfirmasi.verifikasi');
+     
+Route::post('/keuangan/konfirmasi/{id}/reminder', [KeuanganController::class, 'reminder'])
+     ->name('keuangan.konfirmasi.reminder');
 
 
 

@@ -54,4 +54,9 @@ class Transaksi extends Model
     {
         return $this->belongsTo(NeoMahasiswa::class, 'pin', 'pin');
     }
+
+    public function konfirmasi()
+    {
+        return $this->hasOne(KonfirmasiPembayaran::class, 'transaksi_id');
+    }
 }

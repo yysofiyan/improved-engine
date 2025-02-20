@@ -354,7 +354,7 @@
       <i class="mdi mdi-file-excel"></i> Export 2024 --}}
     </a>
    </div>
-   <p class="font-weight-800">Per Tanggal : {{ $tanggal1 }}</p>
+   <p class="font-weight-800">Per Tanggal : {{ now()->day }} {{ now()->translatedFormat('F') }} 2024</p>
     <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP</p>
     <div class="table-responsive">
       <table id="refMember" class="display expandable-table table-hover" style="width:100%">
