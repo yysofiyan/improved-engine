@@ -18,6 +18,7 @@ use Barryvdh\DomPDF\Facade\Pdf as Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class SuperadminController extends Controller
 {
@@ -74,40 +75,56 @@ class SuperadminController extends Controller
 
     public function camaba(Request $request)
     {
-        if($request->ajax()) {
-            $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,neomahasiswas.is_aktif,neomahasiswas.handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,status,id_operator,asal_sekolah,neomahasiswas.created_at'))
-                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-                ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
-                //->where('neomahasiswas.tahun_masuk','2025')
-                ->orderby('neomahasiswas.created_at','asc')
-                ->get();
-                $data=[];
-                foreach ($getData as $item)
-                {
-                    $data[]=[
-                        'id'=>$item['id'],
-                        'nomor_daftar'=>$item['nomor_pendaftaran'].'/'.$item['pin'],
-                        'nomor_pendaftaran'=>$item['nomor_pendaftaran'],
-                        'pin'=>$item['pin'],
-                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
-                        'is_aktif'=>$item['is_aktif'],
-                        'sma'=>$item['asal_sekolah'],
-                        'handphone'=> $item['handphone'],
-                        'operator'=> AkademikHelpers::getUser($item['id_operator']),
-                        'nama_prodi'=> $item['nama_prodi'].' ( '.$item['nama_jenjang'].' ) ',
-                        'tanggal_daftar'=> $item['created_at'],
+        try {
+            $tahunList = Neomahasiswa::select(DB::raw('YEAR(created_at) as tahun'))
+                ->distinct()
+                ->orderBy('tahun', 'desc')
+                ->pluck('tahun');
+
+            if($request->ajax()) {
+                $tahun = $request->input('tahun', date('Y'));
+                
+                $query = Neomahasiswa::with(['prodiRelation', 'operator'])
+                    ->whereYear('created_at', $tahun)
+                    ->orderBy('created_at', 'asc');
+
+                $total = $query->count();
+                $filtered = $query->count();
+
+                $data = $query->get()->map(function($item) {
+                    return [
+                        'tanggal_daftar' => $item->created_at->format('d/m/Y'),
+                        'nomor_daftar' => $item->nomor_pendaftaran.'/'.$item->pin,
+                        'nama_mahasiswa' => $item->nama_mahasiswa,
+                        'handphone' => $item->handphone,
+                        'nama_prodi' => $item->prodiRelation->nama_prodi ?? 'N/A',
+                        'asal_sekolah' => $item->asal_sekolah ?? null,
+                        'operator' => $item->id_operator ? 
+                            $item->operator->name.' (ID: '.$item->id_operator.')' : 
+                            'ONLINE',
+                        'pin' => $item->pin,
+                        'nomor_pendaftaran' => $item->nomor_pendaftaran
                     ];
+                });
+
+                return response()->json([
+                    'data' => $data,
+                    'draw' => (int)$request->input('draw', 0),
+                    'recordsTotal' => $total,
+                    'recordsFiltered' => $filtered
+                ]);
             }
 
-            return Response()->json([
-                'error_code'=>0,
-                'error_desc'=>'',
-                'data'=>$data,
-                'message'=>'fetch data berhasil'
-            ], 200);
+            return view('admin/camaba', [
+                'tahunList' => $tahunList
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Camaba Error: '.$e->getMessage());
+            return response()->json([
+                'error' => 'Server Error: '.$e->getMessage()
+            ], 500);
         }
-
-        return view('admin/camaba');
     }
 
     public function lihatPin(Request $request,$id)

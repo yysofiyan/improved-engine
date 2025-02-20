@@ -7,7 +7,14 @@
     <div class="col-md-12 grid-margin">
         <div class="row">
             <div class="col-12 mb-4 mb-xl-0">
-                <h3 class="font-weight-bold"> Pendaftaran Calon Mahasiswa Baru {{ \App\Helpers\AkademikHelpers::getFakultasNama(session('kodeprodi')) }} </h3>
+                <h3 class="font-weight-bold">Pendaftaran Calon Mahasiswa Baru {{ \App\Helpers\AkademikHelpers::getFakultasNama(session('kodeprodi')) }}</h3>
+                <div class="form-group mt-3">
+                    <select class="form-control" id="tahunFilter" style="width: 200px;">
+                        @foreach($tahunList as $tahun)
+                            <option value="{{ $tahun }}" {{ $tahun == date('Y') ? 'selected' : '' }}>{{ $tahun }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -77,18 +84,33 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             ajax: {
-                url: 'pendaftaran'
+                url: '{{ route("pendaftaran.data") }}',
+                data: function(d) {
+                    d.tahun = $('#tahunFilter').val();
+                }
             },
             columns: [
-                { data: null, orderable: false, searchable: false },
-                { data: 'nomor_daftar' },
+                { data: null, orderable: false },
+                { data: 'nomor_pendaftaran' },
                 { data: 'nama_mahasiswa' },
                 { data: 'handphone' },
                 { data: 'nama_prodi' },
                 { data: 'is_aktif' },
-                { data: 'nomor_pendaftaran' },
+                { data: 'actions' }
             ],
             'columnDefs': [
+                {
+                    targets: 0,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    targets: 1,
+                    render: function(data, type, row) {
+                        return row.nomor_pendaftaran;
+                    }
+                },
                 {
                     "targets": 3,
                     "className": "text-center",
@@ -193,6 +215,9 @@ Swal.fire({
 
 });
 
+$('#tahunFilter').change(function() {
+    table.ajax.reload();
+});
 
     });
 

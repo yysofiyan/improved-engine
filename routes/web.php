@@ -206,6 +206,12 @@ Route::middleware('authYPSA')->group(function() {
         Route::post('/fakultas', [PenggunaController::class, 'storefakultas']);
         Route::delete('/fakultas/hapus/{id}', [PenggunaController::class, 'hapusfakultas'])->name('fakultas.hapus');
 
+        // Rute untuk mendapatkan data calon mahasiswa baru (CAMABA) 
+        // Menggunakan method camaba dari SuperadminController
+        // Data dikembalikan dalam format JSON untuk keperluan DataTables
+        Route::get('camaba/data', [SuperadminController::class, 'camaba'])
+            ->name('camaba.data'); // Nama rute untuk referensi
+
     });
 
 
@@ -482,5 +488,13 @@ Route::get('/images/persyaratan/{filename}', function ($filename) {
 // Data dikembalikan dalam format JSON
 Route::get('/api/pendaftar-hari-ini', [OperatorController::class, 'getPendaftarHariIni'])
     ->name('api.pendaftar-hari-ini'); // Menambahkan nama rute untuk referensi
+
+// Rute untuk mendapatkan data kelulusan mahasiswa
+// Menggunakan method kelulusan dari FakultasController
+// Data dikembalikan dalam format JSON untuk keperluan DataTables
+Route::get('kelulusan/data', [FakultasController::class, 'kelulusan'])
+    ->name('kelulusan.data'); // Nama rute untuk referensi
+
+Route::get('pendaftaran/data', [FakultasController::class, 'pendaftaran'])->name('pendaftaran.data');
 
 

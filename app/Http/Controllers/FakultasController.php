@@ -11,6 +11,7 @@ use App\Helpers\AkademikHelpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 class FakultasController extends Controller
 {
@@ -127,45 +128,58 @@ class FakultasController extends Controller
 
     public function pendaftaran(Request $request)
     {
-        if($request->ajax()) {
-            if (session('pilihprodi')!='')
-            {
-                $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,neomahasiswas.is_aktif,neomahasiswas.handphone,nama_prodi,nama_jenjang,nomor_pendaftaran'))
-                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-                ->where('kodeprodi_satu',session('pilihprodi'))
-                ->get();
-            }else
-            {
-                $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,neomahasiswas.is_aktif,neomahasiswas.handphone,nama_prodi,nama_jenjang,nomor_pendaftaran'))
-                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-                ->whereIn('kodeprodi_satu',session('l_prodi'))
-                ->get();
+        try {
+            $tahunList = Neomahasiswa::select(DB::raw('YEAR(created_at) as tahun'))
+                ->distinct()
+                ->orderBy('tahun', 'desc')
+                ->pluck('tahun');
+
+            if($request->ajax()) {
+                $tahun = $request->input('tahun', date('Y'));
+                
+                $query = Neomahasiswa::with(['prodiRelation'])
+                    ->when($tahun, function($q) use ($tahun) {
+                        return $q->whereYear('created_at', $tahun);
+                    });
+
+                // Filter prodi
+                if (session('pilihprodi') != '') {
+                    $query->where('kodeprodi_satu', session('pilihprodi'));
+                } else {
+                    $query->whereIn('kodeprodi_satu', session('l_prodi'));
+                }
+
+                $data = $query->get()->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'nomor_pendaftaran' => $item->nomor_pendaftaran.'/'.$item->pin,
+                        'nama_mahasiswa' => $item->nama_mahasiswa,
+                        'handphone' => $item->handphone,
+                        'nama_prodi' => $item->prodiRelation->nama_prodi ?? 'N/A',
+                        'is_aktif' => $item->is_aktif,
+                        'actions' => $item->id
+                    ];
+                });
+
+                $total = $data->count();
+                $filtered = $total;
+
+                return response()->json([
+                    'data' => $data,
+                    'draw' => $request->input('draw'),
+                    'recordsTotal' => $total,
+                    'recordsFiltered' => $filtered
+                ]);
             }
             
-                $data=[];
-                foreach ($getData as $item)
-                {
-                    $data[]=[
-                        'id'=>$item['id'],
-                        'nomor_daftar'=>$item['nomor_pendaftaran'].'/'.$item['pin'],
-                        'nomor_pendaftaran'=>$item['nomor_pendaftaran'],
-                        'pin'=>$item['pin'],
-                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
-                        'is_aktif'=>$item['is_aktif'],
-                        'handphone'=> $item['handphone'],
-                        'nama_prodi'=> $item['nama_prodi'].' ( '.$item['nama_jenjang'].' ) ',
-                    ];
-            }
-
-            return Response()->json([
-                'error_code'=>0,
-                'error_desc'=>'',
-                'data'=>$data,
-                'message'=>'fetch data berhasil'
-            ], 200);
+            return view('fakultas/pendaftaran', [
+                'tahunList' => $tahunList
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error in pendaftaran: '.$e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan server'], 500);
         }
-
-        return view('fakultas/pendaftaran');
     }
 
     public function rekomendasi(Request $request)
@@ -220,48 +234,61 @@ class FakultasController extends Controller
 
     public function kelulusan(Request $request)
     {
-        if($request->ajax()) {
-            if (session('pilihprodi')!='')
-            {
-                $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
-                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-                ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
-                ->where('kodeprodi_satu',session('pilihprodi'))
-                ->get();
-            }else
-            {
-                $getData=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
-                ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
-                ->join('quiz_murid','neomahasiswas.id','=','quiz_murid.murid_id')
-                ->whereIn('kodeprodi_satu',session('l_prodi'))
-                ->get();
+        try {
+            // Generate tahun list dari data yang ada
+            $tahunList = Neomahasiswa::select(DB::raw('YEAR(created_at) as tahun'))
+                ->distinct()
+                ->orderBy('tahun', 'desc')
+                ->pluck('tahun');
+
+            if($request->ajax()) {
+                $tahun = $request->input('tahun', date('Y'));
+                
+                $query = Neomahasiswa::with(['prodiRelation'])
+                    ->join('quiz_murid', 'neomahasiswas.id', '=', 'quiz_murid.murid_id')
+                    ->when($tahun, function($q) use ($tahun) {
+                        return $q->whereYear('neomahasiswas.created_at', $tahun);
+                    });
+
+                // Filter prodi
+                if (session('pilihprodi') != '') {
+                    $query->where('kodeprodi_satu', session('pilihprodi'));
+                } else {
+                    $query->whereIn('kodeprodi_satu', session('l_prodi'));
+                }
+
+                $data = $query->get()->map(function($item) {
+                    return [
+                        'pin' => $item->pin,
+                        'nama_mahasiswa' => $item->nama_mahasiswa,
+                        'handphone' => $item->handphone,
+                        'nama_prodi' => $item->prodiRelation->nama_prodi ?? 'N/A',
+                        'lulus' => $item->status == 1 ? 'Lulus' : 'Tidak Lulus',
+                        'daftar' => $item->nomor_pendaftaran
+                    ];
+                });
+
+                $total = $data->count();
+                $filtered = $total;
+
+                return response()->json([
+                    'data' => $data,
+                    'draw' => $request->input('draw'),
+                    'recordsTotal' => $total,
+                    'recordsFiltered' => $filtered
+                ]);
             }
             
-                $data=[];
-                foreach ($getData as $item)
-                {
-                    $data[]=[
-                        'id'=>$item['id'],
-                        'nomor_pendaftaran'=>$item['nomor_pendaftaran'],
-                        'pin'=>$item['pin'],
-                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
-                        'is_aktif'=>$item['is_aktif'],
-                        'handphone'=> $item['handphone'],
-                        'nama_prodi'=> $item['nama_prodi'].' ( '.$item['nama_jenjang'].' ) ',
-                        'nilai'=> $item['nilai'],
-                        'lulus'=>'Lulus',
-                        'daftar'=>$item['nomor_pendaftaran'],
-                    ];
-            }
-
-            return Response()->json([
-                'error_code'=>0,
-                'error_desc'=>'',
-                'data'=>$data,
-                'message'=>'fetch data berhasil'
-            ], 200);
+            return view('fakultas/kelulusan', [
+                'tahunList' => $tahunList
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error in kelulusan: '.$e->getMessage());
+            return response()->json([
+                'error' => 'Terjadi kesalahan server'
+            ], 500);
         }
-        return view('fakultas/kelulusan');
     }
 
     public function pilihprodi(Request $request)

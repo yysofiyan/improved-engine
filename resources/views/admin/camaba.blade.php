@@ -7,7 +7,14 @@
     <div class="col-md-12 grid-margin">
         <div class="row">
             <div class="col-12 mb-4 mb-xl-0">
-                <h3 class="font-weight-bold"> Calon Mahasiswa Baru </h3>
+                <h3 class="font-weight-bold">Calon Mahasiswa Baru</h3>
+                <div class="form-group mt-3">
+                    <select class="form-control" id="tahunFilter" style="width: 200px;">
+                        @foreach($tahunList as $tahun)
+                            <option value="{{ $tahun }}" {{ $tahun == date('Y') ? 'selected' : '' }}>{{ $tahun }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -80,7 +87,13 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             ajax: {
-                url: 'camaba'
+                url: '{{ route("camaba.data") }}',
+                data: function(d) {
+                    d.tahun = $('#tahunFilter').val();
+                },
+                error: function(xhr) {
+                    console.error('Ajax Error:', xhr.responseText);
+                }
             },
             columns: [
                 { data: 'tanggal_daftar' },
@@ -88,55 +101,70 @@
                 { data: 'nama_mahasiswa' },
                 { data: 'handphone' },
                 { data: 'nama_prodi' },
-                { data: 'sma' },
-                { data: 'operator' },
+                { 
+                    data: 'asal_sekolah',
+                    render: function(data, type, row) {
+                        return data || '<span class="text-muted">-</span>';
+                    }
+                },
+                { 
+                    data: 'operator',
+                    render: function(data) {
+                        return `<span class="badge badge-success">${data}</span>`;
+                    }
+                },
                 { data: 'pin' },
                 { data: 'nomor_pendaftaran' },
                 { data: 'pin' }
             ],
             'columnDefs': [
                 {
+                    "targets": 5,
+                    "className": "text-left",
+                    "render": function(data, type, row, meta) {
+                        return row.asal_sekolah ? row.asal_sekolah : '-';
+                    }
+                },
+                {
                     "targets": 6,
                     "className": "text-center",
-                    "render": function (data, type, row, meta) { 
-                            return '<span class="badge badge-success">'+ data + '</span>';
-                       
+                    "render": function(data, type, row, meta) {
+                        return `<span class="badge badge-success">${row.operator}</span>`;
+                    }
+                },
+                {
+                    "targets": 7,
+                    "className": "text-center",
+                    "render": function ( data, type, row, meta ) {
+                        // Update Button
+                     $updateButton = "<a href='lihat/"+ data +"' class='btn btn-sm btn-info'  ><i class='fa-solid fa-pen-to-square'></i></a>";
+                     // Delete Button
+                    
+                        return $updateButton;
 
                     }
                 },
-            {
-                "targets": 7,
-                "className": "text-center",
-                "render": function ( data, type, row, meta ) {
-                    // Update Button
-                 $updateButton = "<a href='lihat/"+ data +"' class='btn btn-sm btn-info'  ><i class='fa-solid fa-pen-to-square'></i></a>";
-                 // Delete Button
-                
-                    return $updateButton;
+                {
+                    "targets": 8,
+                    "className": "text-center",
+                    "render": function ( data, type, row, meta ) {
+                        // Update Button
+                     $updateButton = "<a target='_blank' href='lihatpdf/"+ data +"' class='btn btn-sm btn-info'  ><i class='fa-solid fa-print'></i></a>";
+                     // Delete Button
+                    
+                        return $updateButton;
 
-                }
-            },
-            {
-                "targets": 8,
-                "className": "text-center",
-                "render": function ( data, type, row, meta ) {
-                    // Update Button
-                 $updateButton = "<a target='_blank' href='lihatpdf/"+ data +"' class='btn btn-sm btn-info'  ><i class='fa-solid fa-print'></i></a>";
-                 // Delete Button
-                
-                    return $updateButton;
+                    }
+                },
+                {
+                    "targets": 9,
+                    "className": "text-center",
+                    "render": function ( data, type, row, meta ) {
+                        return "<a href='javascript:void(0)' data-toggle='modal' data-target='#modal-delete' data-id='" + data + "'' data-original-title='Delete' class='btn btn-sm btn-info reminderUser' ><i class='fa-brands fa-whatsapp'></i></a>";
 
-                }
-            },
-            {
-                "targets": 9,
-                "className": "text-center",
-                "render": function ( data, type, row, meta ) {
-                    return "<a href='javascript:void(0)' data-toggle='modal' data-target='#modal-delete' data-id='" + data + "'' data-original-title='Delete' class='btn btn-sm btn-info reminderUser' ><i class='fa-brands fa-whatsapp'></i></a>";
-
-                }
-            },
-        ]
+                    }
+                },
+            ]
 
         });
         table.on('order.dt search.dt', function () {
@@ -207,6 +235,9 @@ Swal.fire({
 
 });
 
+$('#tahunFilter').change(function() {
+    table.ajax.reload();
+});
 
     });
 

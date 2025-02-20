@@ -93,4 +93,14 @@ class Neomahasiswa extends Model
     {
         return $this->belongsTo(Prodi::class, 'kodeprodi_satu', 'config');
     }
+    /**
+     * Mendefinisikan relasi belongsTo ke model User berdasarkan id_operator
+     * Digunakan untuk mendapatkan data operator yang menangani pendaftaran
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function operator()
+    {
+        return $this->belongsTo(User::class, 'id_operator');
+    }
 }

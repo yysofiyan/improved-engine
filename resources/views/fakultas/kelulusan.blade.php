@@ -7,7 +7,14 @@
     <div class="col-md-12 grid-margin">
         <div class="row">
             <div class="col-12 mb-4 mb-xl-0">
-                <h3 class="font-weight-bold">Kelulusan Calon Mahasiswa Baru {{ \App\Helpers\AkademikHelpers::getFakultasNama(session('kodeprodi')) }}   </h3>
+                <h3 class="font-weight-bold">Kelulusan Calon Mahasiswa Baru {{ \App\Helpers\AkademikHelpers::getFakultasNama(session('kodeprodi')) }}</h3>
+                <div class="form-group mt-3">
+                    <select class="form-control" id="tahunFilter" style="width: 200px;">
+                        @foreach($tahunList as $tahun)
+                            <option value="{{ $tahun }}" {{ $tahun == date('Y') ? 'selected' : '' }}>{{ $tahun }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -72,29 +79,33 @@
       
 
         let table = $('#refMember').DataTable({
+            processing: true,
+            serverSide: true,
             ajax: {
-                url: 'hasil-kelulusan'
+                url: '{{ route("kelulusan.data") }}',
+                data: function(d) {
+                    d.tahun = $('#tahunFilter').val();
+                }
             },
             columns: [
-                { data: null, orderable: false, searchable: false },
+                { data: null, orderable: false },
                 { data: 'pin' },
                 { data: 'nama_mahasiswa' },
                 { data: 'handphone' },
                 { data: 'nama_prodi' },
                 { data: 'lulus' },
-                { data: 'daftar' },
+                { data: 'daftar' }
             ],
             'columnDefs': [
                 {
                     "targets": 5,
                     "className": "text-center",
                     "render": function (data, type, row, meta) {
-                        if (data == 'Lulus') {
+                        if (row.lulus == 'Lulus') {
                             return '<span class="badge badge-success">Lulus</span>';
                         } else {
                             return '<span class="badge badge-danger">Tidak Lulus</span>';
                         }
-
                     }
                 },
                 {
@@ -148,6 +159,10 @@ Swal.fire({
 
 
 });
+
+        $('#tahunFilter').change(function() {
+            table.ajax.reload();
+        });
     });
 
    
