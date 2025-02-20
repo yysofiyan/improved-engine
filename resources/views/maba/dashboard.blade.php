@@ -978,7 +978,7 @@
                                                     
                                                     @if(!empty($persyaratan->ijasah_lanjutan))
                                                         <label class="info mt-2 text-white">
-                                                            <a href="{{ url('images/persyaratan/' . $persyaratan->ijasah_lanjutan) }}" target="_blank"> File</a>
+                                                            <a href="{{ url('images/persyaratan/' . $persyaratan->ijasah_lanjutan) }}" target="_blank"> Lihat File</a>
                                                         </label>
                                                     @endif
                                                 </div>
@@ -1016,6 +1016,8 @@
                                                 in_array($mhs->jenis_daftar, [2,6]) || 
                                                 ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn))
                                             )
+                                                <small class="form-text text-muted">Maksimal ukuran file upload: 2 MB</small>
+                                                <br>
                                                 <button type="submit" class="btn btn-success" id="btnImport">Submit</button>
                                             @endif
                                         </div>

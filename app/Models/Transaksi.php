@@ -39,4 +39,9 @@ class Transaksi extends Model
         'id'=>'string'
     ];
 
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Neomahasiswa::class, 'pin', 'pin');
+    }
+
 }

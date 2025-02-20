@@ -35,7 +35,7 @@ class SuperadminController extends Controller
             ->orderBy('pe3_fakultas.urut')
             ->get();
         
-            $pendaftarHariIni=Neomahasiswa::where('created_at',Carbon::now())->count();
+            $pendaftarHariIni = Neomahasiswa::whereDate('created_at', Carbon::today())->count();
             $totalPendaftar=Neomahasiswa::count();
             $totalLulus=Neomahasiswa::select(DB::raw('neomahasiswas.id,pin, nama_mahasiswa,is_aktif,handphone,nama_prodi,nama_jenjang,nomor_pendaftaran,nilai'))
             ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')
@@ -555,38 +555,19 @@ class SuperadminController extends Controller
         
     }
 
-    public function transaksi(Request $request)
+    public function transaksi()
     {
-        if($request->ajax()) {
-            $getData=Transaksi::select(DB::raw('transaksis.id,transaksis.pin, no_transaksi,nama_mahasiswa,transaksis.status,handphone,nama_prodi,nama_jenjang,total'))
-        ->join('neomahasiswas','neomahasiswas.pin','=','transaksis.pin')
-        ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')->get();
-                $data=[];
-                foreach ($getData as $item)
-                {
-                    $data[]=[
-                        'id'=>$item['id'],
-                        'pin'=>$item['pin'],
-                        'no_transaksi'=>$item['no_transaksi'],
-                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
-                        'status'=>$item['status'],
-                        'total'=>'Rp. '.number_format($item['total'],0),
-                        'handphone'=> $item['handphone'],
-                        'nama_prodi'=> $item['nama_prodi'].' - '.$item['nama_jenjang'],
-                    ];
-            }
+        $transaksi = Transaksi::with('mahasiswa')
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($item) {
+                $item->tanggal = \Carbon\Carbon::parse($item->tanggal);
+                return $item;
+            });
 
-            return Response()->json([
-                'error_code'=>0,
-                'error_desc'=>'',
-                'data'=>$data,
-                'message'=>'fetch data berhasil'
-            ], 200);
-            
-        }
-        
-        return view('admin/transaksi');
+        return view('admin.transaksi', compact('transaksi'));
     }
+
     public function konfirmasi(Request $request)
     {
         if($request->ajax()) {

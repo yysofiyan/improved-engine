@@ -325,7 +325,7 @@
 
                   <tr>
                     <td></td>
-                    <td>Teknik Informatika (S1)</td>
+                    <td>Informatika (S1)</td>
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar('a74fffa1-43f1-4ab5-baca-dfbd08b22d20') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin('a74fffa1-43f1-4ab5-baca-dfbd08b22d20') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus('a74fffa1-43f1-4ab5-baca-dfbd08b22d20') }}</td>

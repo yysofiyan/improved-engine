@@ -24,14 +24,43 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>TANGGAL</th>
                                 <th>PIN</th>
                                 <th>NO TRANSAKSI</th>
                                 <th>NAMA</th>
                                 <th>TOTAL</th>
                                 <th>STATUS</th>
-                               
                             </tr>
                         </thead>
+                        <tbody>
+                            @forelse($transaksi as $index => $item)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td data-order="{{ \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d') }}">
+                                    {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}
+                                </td>
+                                <td>{{ $item->pin }}</td>
+                                <td>{{ $item->no_transaksi }}</td>
+                                <td>{{ $item->mahasiswa->nama_mahasiswa ?? 'N/A' }}</td>
+                                <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                                <td>
+                                    @if($item->status == '11')
+                                        <span class="badge badge-success">Lunas</span>
+                                    @elseif($item->status == '10')
+                                        <span class="badge badge-warning">Pending</span>
+                                    @else
+                                        <span class="badge badge-danger">Unknown</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-danger">
+                                    <i class="fas fa-database"></i> Tidak ada data transaksi
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -41,89 +70,52 @@
 @endsection
 
 @push('page-stylesheet')
+<style>
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+.badge-success { background: #28a745; color: white; }
+.badge-warning { background: #ffc107; color: black; }
+.badge-danger { background: #dc3545; color: white; }
+</style>
 @endpush
 
 @push('page-script')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 <script>
-   
-
     $(document).ready(function() {
-        $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-    });
-
-
-
-        let table = $('#refMember').DataTable({
-            ajax: {
-                url: 'transaksi'
-            },
-            columns: [
-                { data: null, orderable: false, searchable: false },
-                { data: 'pin' },
-                { data: 'no_transaksi' },
-                { data: 'nama_mahasiswa' },
-                { data: 'total' },
-                { data: 'status' },
-            ],
-            'columnDefs': [
+        $('#refMember').DataTable({
+            "order": [[1, "desc"]],  // Urutkan berdasarkan kolom tanggal (index 1)
+            "columnDefs": [
                 {
-                    "targets": 5,
-                    "className": "text-center",
-                    "render": function (data, type, row, meta) {
-                        if (data == '11') {
-                            return '<span class="badge badge-info">Lunas</span>';
-                        } else {
-                            return '<span class="badge badge-warning">Belum Lunas</span>';
-                        }
-
-                    }
-                },
-        ]
-
+                    "type": "date-eu",
+                    "targets": 1  // Terapkan ke kolom tanggal
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"
+            }
         });
-        table.on('order.dt search.dt', function () {
-            table.column(0, {search:'applied', order:'applied'}).nodes().each(function (cell, i) {
-                cell.innerHTML = i+1;
-            });
-        });
-        $('#refMember').on('click', '.deleteUser', function () {
-
-var Customer_id = $(this).data("id");
-Swal.fire({
-      icon: 'question',
-      title: 'Apakah akan menghapus member ?',
-      showCancelButton: true,
-      cancelButtonText:'Tidak',
-      confirmButtonText: 'Ya',
-}).then((result) => {
-  /* Read more about isConfirmed, isDenied below */
-  if (result.isConfirmed) {
-      $.ajax({
-          type: "DELETE",
-          url: "member/hapus"+'/'+Customer_id,
-          success: function (data) {
-                table.ajax.url('member').load();
-                Swal.fire(data.success, '', 'success')
-          },
-          error: function (data) {
-              console.log('Error:', data);
-          }
-      });
-
-  } else if (result.isDenied) {
-      Swal.fire('Tidak Terjadi Perubahan Data', '', 'info')
-  }
-})
-
-
-});
     });
 
-   
-
+    // Tambahkan custom sorting untuk format tanggal dd/mm/YYYY
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "date-eu-pre": function(date) {
+            if (!date) return 0;
+            var dateParts = date.split('/');
+            return Date.parse(dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0]);
+        },
+        "date-eu-asc": function(a, b) {
+            return a - b;
+        },
+        "date-eu-desc": function(a, b) {
+            return b - a;
+        }
+    });
 </script>
 @endpush

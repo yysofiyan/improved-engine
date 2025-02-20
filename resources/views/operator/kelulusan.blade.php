@@ -7,7 +7,7 @@
     <div class="col-md-12 grid-margin">
         <div class="row">
             <div class="col-12 mb-4 mb-xl-0">
-                <h3 class="font-weight-bold">Kelulusan Calon Mahasiswa Baru </h3>
+                <h3 class="font-weight-bold">Kelulusan Calon Mahasiswa Baru Tahun {{ date('Y') }}</h3>
             </div>
         </div>
     </div>

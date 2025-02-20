@@ -77,8 +77,7 @@
         <div class="card card-tale">
           <div class="card-body">
             <p class="mb-4">Pendaftar Hari Ini</p>
-            <span id="pendaftar-hari-ini">{{ number_format($pendaftarHariIni,0) }}</span>
-          
+            <span id="pendaftar-hari-ini">{{ number_format($pendaftarHariIni,0) }}</span>          
           </div>
         </div>
       </div>
