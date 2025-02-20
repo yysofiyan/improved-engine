@@ -307,7 +307,7 @@ class KeuanganController extends Controller
             $mahasiswa = DB::table('neomahasiswas')
             ->where('pin','=',$request->pin)
             ->first();
-            $tahun=$mahasiswa->tahun_lulus;
+            $tahun=$mahasiswa->tahun_masuk; // Ganti dari tahun_lulus ke tahun_masuk
             $idkelas='R';
             $prodi_id=$mahasiswa->kodeprodi_satu;
             $idsmt='1';
@@ -318,7 +318,7 @@ class KeuanganController extends Controller
             ->where('kode_fakultas','=',$prodi->kode_fakultas)
             ->first();
 
-            $th=substr($tahun,-2);
+            $th=substr($tahun,-2); // Ambil 2 digit terakhir tahun masuk
             $kode_fakultas=$fakultas->nim_kode;
             $kode_urut_prodi=$prodi->nim_kode;
             $kode_jenjang=$prodi->nim_jenjang;
@@ -337,6 +337,9 @@ class KeuanganController extends Controller
 
             $table="neomahasiswas";
 			$primary="nim";
+            
+            // Format: TTFFPPJS (T=Tahun, F=Fakultas, P=Prodi, J=Jenjang, S=Status)
+
 			$prefix=$th.''.$kode_fakultas.''.$kode_urut_prodi.''.$kode_jenjang.''.$kode_status_mhs;
             
             $nimMHS=$this->autonim($table,$primary,$prefix,$prodi_id);
