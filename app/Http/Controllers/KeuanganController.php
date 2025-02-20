@@ -439,4 +439,31 @@ class KeuanganController extends Controller
         
     }
 
+    public function dashboard()
+    {
+        $tanggal = now()->format('d F Y');
+        $tanggal1 = now()->format('Y-m-d');
+        
+        return view('keuangan.dashboard', [
+            'pendaftarHariIni' => Neomahasiswa::whereDate('created_at', today())->count(),
+            'totalPendaftar' => Neomahasiswa::count(),
+            'totalPendaftarOffline' => Neomahasiswa::whereNotNull('id_operator')->count(),
+            'totalPendaftarOnline' => Neomahasiswa::whereNull('id_operator')->count(),
+            'tanggal' => $tanggal,
+            'tanggal1' => $tanggal1,
+            'data2024' => $this->getDataTahun(2024),
+            'data2025' => $this->getDataTahun(2025)
+        ]);
+    }
+
+    private function getDataTahun($tahun)
+    {
+        return Neomahasiswa::whereYear('created_at', $tahun)
+            ->selectRaw('MONTH(created_at) as bulan, COUNT(*) as total')
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get()
+            ->pluck('total');
+    }
+
 }

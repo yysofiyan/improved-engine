@@ -111,7 +111,8 @@ Route::middleware('authYPSA')->group(function() {
         Route::get('/reload-captcha', [MabaController::class, 'reloadCaptcha']);
         
         // Rute dashboard keuangan
-        Route::get('/dashboard', [KeuanganController::class, 'index'])->name('keuangan.dashboard');
+        Route::get('/dashboard', [KeuanganController::class, 'dashboard'])
+            ->name('keuangan.dashboard');
 
         // Rute manajemen PIN
         Route::get('/buatpin', [KeuanganController::class, 'buatpin'])->name('buatpin');
