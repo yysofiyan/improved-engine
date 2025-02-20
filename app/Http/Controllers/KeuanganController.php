@@ -10,6 +10,8 @@ use App\Models\Neomahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\KonfirmasiPembayaran;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class KeuanganController extends Controller
 {
@@ -59,7 +61,61 @@ class KeuanganController extends Controller
     
     public function index()
     {
-        return view('keuangan/dashboard');
+        $tahunMasuk = Transaksi::selectRaw('YEAR(tanggal) as tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        return view('keuangan.transaksi', [
+            'tahunMasuk' => $tahunMasuk,
+            'tahunAktif' => now()->year
+        ]);
+    }
+
+    public function getDataTransaksi(Request $request)
+    {
+        $query = Transaksi::with(['neomahasiswa'])
+            ->select('id', 'pin', 'no_transaksi', 'tanggal', 'total', 'status');
+
+        // Filter tahun
+        if ($request->tahun) {
+            $query->whereYear('tanggal', $request->tahun);
+        }
+
+        // Hitung total records
+        $totalRecords = Transaksi::count();
+        $filteredRecords = $query->count();
+
+        // Pagination
+        $transaksis = $query->skip($request->start)
+            ->take($request->length)
+            ->get()
+            ->map(function($item, $index) use ($request) {
+                return [
+                    'no' => $request->start + $index + 1,
+                    'tanggal' => $item->tanggal->translatedFormat('d F Y'),
+                    'pin' => $item->pin,
+                    'no_transaksi' => $item->no_transaksi,
+                    'nama_mahasiswa' => $item->neomahasiswa->nama_mahasiswa ?? 'N/A',
+                    'total' => number_format($item->total, 0, ',', '.'),
+                    'status_badge' => $item->status == 11 ? 
+                        '<span class="badge badge-success">Lunas</span>' : 
+                        '<span class="badge badge-warning">Belum Lunas</span>'
+                ];
+            });
+
+        // Tambahkan logging
+        Log::debug('Data Response:', [
+            'count' => $transaksis->count(),
+            'sample' => $transaksis->first()
+        ]);
+
+        return response()->json([
+            'draw' => (int) $request->draw,
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $transaksis
+        ]);
     }
 
     public function buatpin(Request $request)
@@ -164,38 +220,6 @@ class KeuanganController extends Controller
 
     
 
-    public function transaksi(Request $request)
-    {
-        if($request->ajax()) {
-            $getData=Transaksi::select(DB::raw('transaksis.id,transaksis.pin, no_transaksi,nama_mahasiswa,transaksis.status,handphone,nama_prodi,nama_jenjang,total'))
-        ->join('neomahasiswas','neomahasiswas.pin','=','transaksis.pin')
-        ->join('pe3_prodi','neomahasiswas.kodeprodi_satu','=','pe3_prodi.config')->get();
-                $data=[];
-                foreach ($getData as $item)
-                {
-                    $data[]=[
-                        'id'=>$item['id'],
-                        'pin'=>$item['pin'],
-                        'no_transaksi'=>$item['no_transaksi'],
-                        'nama_mahasiswa'=>$item['nama_mahasiswa'],
-                        'status'=>$item['status'],
-                        'total'=>'Rp. '.number_format($item['total'],0),
-                        'handphone'=> $item['handphone'],
-                        'nama_prodi'=> $item['nama_prodi'].' - '.$item['nama_jenjang'],
-                    ];
-            }
-
-            return Response()->json([
-                'error_code'=>0,
-                'error_desc'=>'',
-                'data'=>$data,
-                'message'=>'fetch data berhasil'
-            ], 200);
-            
-        }
-        
-        return view('keuangan/transaksi');
-    }
     public function konfirmasi(Request $request)
     {
         if($request->ajax()) {

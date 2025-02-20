@@ -120,7 +120,8 @@ Route::middleware('authYPSA')->group(function() {
         Route::post('/simpan-pin', [KeuanganController::class, 'simpanpin'])->name('simpan.pin');
 
         // Rute transaksi keuangan
-        Route::get('/transaksi', [KeuanganController::class, 'transaksi'])->name('keuangan.transaksi');
+        Route::get('/transaksi', [KeuanganController::class, 'index'])
+            ->name('keuangan.transaksi');
 
         // Rute konfirmasi pembayaran
         Route::get('/konfirmasi-bayar', [KeuanganController::class, 'konfirmasi'])->name('keuangan.konfirmasi');
@@ -500,5 +501,12 @@ Route::get('kelulusan/data', [FakultasController::class, 'kelulusan'])
 Route::get('pendaftaran/data', [FakultasController::class, 'pendaftaran'])->name('pendaftaran.data');
 
 Route::get('/admin/transaksi', [SuperadminController::class, 'transaksi'])->name('transaksi');
+
+Route::get('/keuangan/transaksi', [KeuanganController::class, 'index'])->name('keuangan.transaksi');
+Route::get('/keuangan/transaksi/data', [KeuanganController::class, 'getDataTransaksi']);
+
+Route::get('/keuangan/konfirmasi/data', [KeuanganController::class, 'getDataKonfirmasi'])
+    ->name('keuangan.konfirmasi.data');
+
 
 

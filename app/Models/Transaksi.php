@@ -36,7 +36,8 @@ class Transaksi extends Model
 	public $incrementing = false;
 
     protected $casts = [
-        'id'=>'string'
+        'id' => 'string',
+        'tanggal' => 'datetime:Y-m-d',
     ];
 
     public function mahasiswa()
@@ -44,4 +45,13 @@ class Transaksi extends Model
         return $this->belongsTo(Neomahasiswa::class, 'pin', 'pin');
     }
 
+    public function getTanggalFormattedAttribute()
+    {
+        return $this->tanggal->translatedFormat('d F Y');
+    }
+
+    public function neomahasiswa()
+    {
+        return $this->belongsTo(NeoMahasiswa::class, 'pin', 'pin');
+    }
 }
