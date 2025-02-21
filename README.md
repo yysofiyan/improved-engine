@@ -1,5 +1,7 @@
 ## About The Project
 
+[![wakatime](https://wakatime.com/badge/user/26566595-1b62-44e9-bdc1-94bbe94879ec/project/d4b0deca-4afb-45a4-b50c-e939e6189207.svg)](https://wakatime.com/badge/user/26566595-1b62-44e9-bdc1-94bbe94879ec/project/d4b0deca-4afb-45a4-b50c-e939e6189207)
+
 This is a web-based application for UNSAP's student admission process (PMB) for academic.
 
 ### Built With
