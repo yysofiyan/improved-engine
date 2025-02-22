@@ -679,7 +679,7 @@ class MabaController extends Controller
                     'ijasah'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
                     'ktp_kk'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
                     'foto'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
-                    'ket_sehat'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf',
+                    'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf',
                 ]);
             }else
             {
@@ -699,8 +699,8 @@ class MabaController extends Controller
                 'ket_sehat'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional tergantung kebijakan prodi
                 'khs'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk melihat progress studi
                 'ktm'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib sebagai bukti status mahasiswa
-                'surat_pindah'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk proses transfer
-                'screen_pddikti'=>'required|file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk verifikasi data PDDikti
+                'surat_pindah'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk proses transfer
+                'screen_pddikti'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Wajib untuk verifikasi data PDDikti
                 'ijasah_lanjutan'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional jika ada ijazah tambahan
                 'transkrip_nilai'=>'file|mimes:jpg,jpeg,bmp,png,pdf', // Opsional untuk melihat nilai lengkap
             ]);

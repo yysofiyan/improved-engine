@@ -2,14 +2,14 @@
 
 @section('title', 'Dashboard')
 @section('content')
-    {{-- @php
+    @php
         dump([
             'ijasah' => $persyaratan->ijasah ?? null,
             'prodi' => $mhs->prodi ? $mhs->prodi->toArray() : null,
             'soal' => $soal,
             'nisn' => $mhs->nisn
         ]);
-    @endphp --}}
+    @endphp
     <div class="row" style="margin-top:50px;">
         <div class="col-md-12 grid-margin">
             <div class="row">
@@ -326,7 +326,7 @@
                                                            name="nisn" 
                                                            value="{{ old('nisn', $mhs->nisn) }}"
                                                            @if($mhs->jenis_daftar == 1 && !($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) required @endif
-                                                           placeholder="@if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))Diisi jika ada @elseWajib diisi @endif">
+                                                           placeholder="@if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')) Pindahan/lanjutan @Wajib diisi @endif">
                                                     @if(in_array($mhs->jenis_daftar, [2,6]) || ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2'))
                                                         <small class="text-muted">Tidak wajib untuk:
                                                             <ul>
@@ -1014,7 +1014,8 @@
                                             @if(
                                                 ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2') || 
                                                 in_array($mhs->jenis_daftar, [2,6]) || 
-                                                ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn))
+                                                ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn)) ||
+                                                (\App\Helpers\AkademikHelpers::getFakultas($mhs->kodeprodi_satu) == '13')
                                             )
                                                 <small class="form-text text-muted">Maksimal ukuran file upload: 2 MB</small>
                                                 <br>
