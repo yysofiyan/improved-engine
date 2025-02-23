@@ -1,33 +1,31 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-
-    # Redirect ke HTTPS
+    
+    # Redirect to HTTPS
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-    # Redirect ke folder public
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ public/$1 [L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # ================== BLOKIR JUDI ONLINE ================== #
-    
-    # Blokir via Referer & Query String (Slot, Gacor, dll)
-    RewriteCond %{HTTP_REFERER} (slot-online|gacor|rtp-slot|judi-slot|slot88|maxwin|anti-rungkad|bosku|totoslot|dewa365|pragmaticplay|spadegaming|habanero|joker123|ioncuan|mpo007) [NC,OR]
-    RewriteCond %{QUERY_STRING} (slot|gacor|rtp|judi|maxwin|toto)([^a-z]|$) [NC]
-    RewriteRule ^.*$ - [F,L]
-
-    # Blokir User-Agent Bot Spesifik Judi
-    RewriteCond %{HTTP_USER_AGENT} (SlotMachine|BotJudi|GacorScanner|DewaLive) [NC]
-    RewriteRule ^.*$ - [F,L]
+    # Redirect all requests to public folder
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
 <IfModule mod_headers.c>
-    # Izinkan akses CORS untuk DataTables i18n
+    # Enable CORS for specific domains
     Header set Access-Control-Allow-Origin "https://cdn.datatables.net"
-    Header set Access-Control-Allow-Methods "GET"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "X-Requested-With, Content-Type, X-Token-Auth, Authorization"
+    
+    # Remove X-Powered-By and Server headers
+    Header unset X-Powered-By
+    Header unset Server
+    
+    # Security headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
