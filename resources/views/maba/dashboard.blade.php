@@ -2,14 +2,14 @@
 
 @section('title', 'Dashboard')
 @section('content')
-    @php
+    {{-- @php
         dump([
             'ijasah' => $persyaratan->ijasah ?? null,
             'prodi' => $mhs->prodi ? $mhs->prodi->toArray() : null,
             'soal' => $soal,
             'nisn' => $mhs->nisn
         ]);
-    @endphp
+    @endphp --}}
     <div class="row" style="margin-top:50px;">
         <div class="col-md-12 grid-margin">
             <div class="row">
@@ -1013,7 +1013,7 @@
                                         <div class="text-left">
                                             @if(
                                                 ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2') || 
-                                                in_array($mhs->jenis_daftar, [2,6]) || 
+                                                in_array($mhs->jenis_daftar, [1,2,6]) || 
                                                 ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn)) ||
                                                 (\App\Helpers\AkademikHelpers::getFakultas($mhs->kodeprodi_satu) == '13')
                                             )
@@ -1050,12 +1050,13 @@
                                 <div class="row">
                                     @if(
                                         (
-                                            // Untuk S2 tidak perlu cek NISN
+                                            // Untuk program S2, hanya perlu memeriksa apakah file ijazah sudah diupload
                                             ($mhs->prodi && $mhs->prodi->nama_jenjang === 'S-2' && $persyaratan->ijasah) || 
+                                            (in_array($mhs->jenis_daftar, [1,2,6]) && $persyaratan->ijasah) ||
                                             
-                                            // Untuk non-S2 wajib NISN
-                                            (!empty($mhs->nisn))
-                                        ) 
+                                            // Untuk program non-S2, wajib memiliki NISN yang valid
+                                            (!empty($mhs->nisn) && $mhs->nisn != '')
+                                        )
                                         && $soal == 0
                                     )
                                         <div class="form-group col-lg-6 mx-auto">
@@ -1092,12 +1093,12 @@
                                 @else
                                     <div class="form-group col-lg-6 mx-auto @error('asal_sekolah') has-danger @enderror">
                                         <label class="col-sm-12 "><strong>Surat Pengumuman Kelulusan</strong></label>
-                                        @if ($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2')
+                                        @if (($mhs->prodi && $mhs->prodi->nama_jenjang == 'S-2') || in_array($mhs->jenis_daftar, [1,2,6]))
                                             <a href="{{ route('downloadpdf.s2', $mhs->nomor_pendaftaran) }}" 
                                                class="btn btn-info mr-2"
                                                target="_blank">
                                                 <i class="fa-solid fa-receipt fa-fw mr-2"></i>
-                                                Download Surat Kelulusan Pascasarjana (S2)
+                                                Download Surat Kelulusan
                                             </a>
                                         @else
                                             <a href="{{ url('downloadpdf/' . $mhs->nomor_pendaftaran) }}"

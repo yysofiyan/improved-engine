@@ -89,7 +89,7 @@
 <p style="text-align:center; font-weight:bold; margin-bottom:20px">
     Panitia Penerimaan Mahasiswa Baru (PMB) Universitas Sebelas April dan STAI Sebelas April Sumedang<br>
     {{-- Tahun Akademik {{ \App\Helpers\AkademikHelpers::getTahunAktif() }} / 2026 menyatakan bahwa: --}}
-    Tahun Akademik 205/2026 menyatakan bahwa:
+    Tahun Akademik 2025 / 2026 menyatakan bahwa:
 
 </p>
 

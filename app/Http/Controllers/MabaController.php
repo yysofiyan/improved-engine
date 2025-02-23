@@ -344,13 +344,16 @@ class MabaController extends Controller
 
     public function simpandaftar(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'nik' => 'required|unique:neomahasiswas|min:16|max:16',
             'nama_mahasiswa' => 'required',
-            'captcha' => 'required|captcha',
+            //'captcha' => 'required|captcha',
             'jenis_kelamin' => 'required',
             'handphone' => 'required|starts_with:8|min:10',
-            'kodeprodi' => 'required',
+            'kodeprodi_satu' => 'required|exists:pe3_prodi,kode_prodi',
+        ], [
+            'kodeprodi_satu.required' => 'Kolom program studi wajib dipilih',
+            'kodeprodi_satu.exists' => 'Program studi yang dipilih tidak valid'
         ]);
 
         try {
@@ -1043,4 +1046,5 @@ class MabaController extends Controller
         }
     }
 
+    
 }

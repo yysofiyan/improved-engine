@@ -13,19 +13,19 @@
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-<IfModule mod_headers.c>
-    # Enable CORS for specific domains
-    Header set Access-Control-Allow-Origin "https://cdn.datatables.net"
-    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    Header set Access-Control-Allow-Headers "X-Requested-With, Content-Type, X-Token-Auth, Authorization"
+# <IfModule mod_headers.c>
+#     # Enable CORS for specific domains
+#     Header set Access-Control-Allow-Origin "https://cdn.datatables.net"
+#     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+#     Header set Access-Control-Allow-Headers "X-Requested-With, Content-Type, X-Token-Auth, Authorization"
     
-    # Remove X-Powered-By and Server headers
-    Header unset X-Powered-By
-    Header unset Server
+#     # Remove X-Powered-By and Server headers
+#     Header unset X-Powered-By
+#     Header unset Server
     
-    # Security headers
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set Referrer-Policy "strict-origin-when-cross-origin"
-</IfModule>
+#     # Security headers
+#     Header set X-Content-Type-Options "nosniff"
+#     Header set X-XSS-Protection "1; mode=block"
+#     Header set X-Frame-Options "SAMEORIGIN"
+#     Header set Referrer-Policy "strict-origin-when-cross-origin"
+# </IfModule>

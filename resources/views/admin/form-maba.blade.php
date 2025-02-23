@@ -274,6 +274,15 @@
                           </div>
                       </div>
                   </div>
+                  <div class="row">
+                      <div class="form-group col-lg-6">
+                          <label>Instansi <span class="badge badge-info">Diisi khusus untuk mahasiswa pasca</span></label>
+                          <input type="text" class="form-control" 
+                                 name="instansi" 
+                                 placeholder="Masukkan Nama Instansi (Jika Ada)"
+                                 value="{{ old('instansi', $mhs->instansi) }}">
+                      </div>
+                  </div>
       
                   <p class="card-description">
                       Pilih Program Studi
@@ -849,7 +858,21 @@
       let year = d.getFullYear();
   
       let fullDate = `${day}, ${date} ${name} ${year}`;
-      document.getElementById("tanggal").innerHTML = fullDate;
+      
+      // Buat elemen baru untuk menampilkan tanggal
+      const tanggalContainer = document.createElement('div');
+      tanggalContainer.id = 'tanggal';
+      tanggalContainer.innerHTML = fullDate;
+      tanggalContainer.style.fontWeight = 'bold';
+      tanggalContainer.style.marginBottom = '20px';
+      
+      // Cari elemen pertama dalam dokumen dan sisipkan tanggal sebelum elemen tersebut
+      const firstElement = document.body.firstElementChild;
+      if (firstElement) {
+          document.body.insertBefore(tanggalContainer, firstElement);
+      } else {
+          document.body.appendChild(tanggalContainer);
+      }
   
       $('.counter').each(function() {
           $(this).prop('Counter', 0).animate({
