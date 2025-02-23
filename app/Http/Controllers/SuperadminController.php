@@ -307,6 +307,7 @@ class SuperadminController extends Controller
             'tahun_lulus' => 'required',
             'kode_pt_asal' => '',
             'kode_prodi_asal' => '',
+            'instansi' => 'sometimes|nullable|max:255', // Validasi untuk field instansi, opsional dan maksimal 255 karakter
             'catatan' => '',
             'kodeprodi_satu' => 'required',
             'kodeprodi_dua' => 'required',
@@ -342,6 +343,7 @@ class SuperadminController extends Controller
                 'tahun_lulus'=>$request->tahun_lulus,
                 'kode_pt_asal'=>$request->kode_pt_asal,
                 'kode_prodi_asal'=>$request->kode_prodi_asal,
+                'instansi'=>$request->instansi,
                 'negara'=>$request->negara,
                 'provinsi'=>$request->provinsi,
                 'kota'=>$request->kota,
