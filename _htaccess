@@ -1,32 +1,70 @@
+# Block gambling-related URLs
 <IfModule mod_rewrite.c>
-    RewriteEngine On
+RewriteCond %{REQUEST_URI} (slot|judi|gacor|maxwin|casino|togel|pragmatic|pg\s*soft|zeus|deposit|dana|betting|joker|habanero|spadegaming|scatter|demo|olympus|princess|gatotkaca) [NC]
+RewriteRule .* - [F,L]
 
-    # Redirect to HTTPS
-    RewriteCond %{HTTPS} off
-    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Block specific gambling terms
+RedirectMatch 403 (?i).*(slot|judi|gacor|maxwin|casino|togel|pragmatic|pg\s*soft|zeus|deposit|dana|betting).*
+RedirectMatch 403 (?i).*(slot\s*online|slot\s*gacor|slot\s*maxwin|slot\s*pragmatic).*
+RedirectMatch 403 (?i).*(slot\s*thailand|slot\s*russia|slot\s*filipina|slot\s*eropa|slot\s*jepang).*
+RedirectMatch 403 (?i).*(slot\s*deposit|slot\s*dana|slot\s*88|slot\s*777|slot\s*303).*
+RedirectMatch 403 (?i).*(joker\s*123|joker\s*gaming|spadegaming|habanero|no\s*limit\s*city).*
+RedirectMatch 403 (?i).*(gates\s*of\s*olympus|starlight\s*princess|gates\s*of\s*gatotkaca).*
+RedirectMatch 403 (?i).*(demo\s*slot|demo\s*scatter|scatter\s*hitam|spaceman\s*slot).*
+RedirectMatch 403 (?i).*(sbobet\s*indonesia|situs\s*sbobet|judi\s*bola\s*online).*
+RedirectMatch 403 (?i).*(slot\s*online\s*terbaik|daftar\s*slot\s*gacor|daftar\s*slot\s*maxwin).*
+RedirectMatch 403 (?i).*(daftar\s*akun\s*gacor|situs\s*slot\s*gacor|server\s*slot\s*gacor).*
+RedirectMatch 403 (?i).*(slot\s*88|slot\s*nuke\s*gaming|slot\s*idn|slot\s*4d).*
+RedirectMatch 403 (?i).*(agen\s*slot|garansi\s*kekalahan|bonus\s*new\s*member).*
+RedirectMatch 403 (?i).*(bandar\s*slot|game\s*slot|situs\s*slot|pola\s*slot).*
+RedirectMatch 403 (?i).*(scatter\s*selayar|bo\s*slot|bonus\s*slot).*
+RedirectMatch 403 (?i).*(deposit\s*slot\s*minimal|deposit\s*slot\s*online).*
+RedirectMatch 403 (?i).*(robopragma|robopg|cheat\s*slot|slot\s*mudah|mahjong).*
+RedirectMatch 403 (?i).*(olympus\s*slot|link\s*robo|gampang\s*menang).*
 
-    # Redirect to public folder
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ public/$1 [L]
+# Block IP addresses attempting to access gambling content
+Order Allow,Deny 
+Deny from env=BlockAccess
+Allow from all
 
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# Custom error page for blocked requests
+ErrorDocument 403 "Access Denied"
 
-    # ================== BLOKIR JUDI ONLINE ================== #
-    
-    # Blokir via Referer & Query String (Slot, Gacor, dll)
-    RewriteCond %{HTTP_REFERER} (slot-online|gacor|rtp-slot|judi-slot|slot88|maxwin|anti-rungkad|bosku|totoslot|dewa365|pragmaticplay|spadegaming|habanero|joker123|ioncuan|mpo007) [NC,OR]
-    RewriteCond %{QUERY_STRING} (slot|gacor|rtp|judi|maxwin|toto)([^a-z]|$) [NC]
-    RewriteRule ^.*$ - [F,L]
+# Block shell, SEO spam and specific domains
+RewriteCond %{REQUEST_URI} (shell|seo|backlink|traffic|bot|human|jingling|flutter_api|rank|bokep|nonton) [NC]
+RewriteRule .* - [F,L]
 
-    # Blokir User-Agent Bot Spesifik Judi
-    RewriteCond %{HTTP_USER_AGENT} (SlotMachine|BotJudi|GacorScanner|DewaLive) [NC]
-    RewriteRule ^.*$ - [F,L]
+# Block specific spam domains
+RewriteCond %{HTTP_HOST} (salmaedusociety\.com|voyageams\.com|umpwr\.ac\.id) [NC]
+RewriteRule .* - [F,L]
+
+# Block specific spam domains and paths
+RedirectMatch 403 (?i).*(masmubata-bata\.com|sainttheresa\.ac\.id|pn-tilamuta\.go\.id|politikamalang\.com|belanjamalang\.com).*
+RedirectMatch 403 (?i).*(creativity|wisuda|silamu|pengaduan|ecuti|delegasi).*
+RedirectMatch 403 (?i).*(wp-includes|ID3|IXR|action|amp-unirow).*
+
+# Block specific email addresses
+RedirectMatch 403 (?i).*cherlinemerline@gmail\.com.*
+
+# Block shell and SEO terms
+RedirectMatch 403 (?i).*(shell\s*for\s*seo|seo\s*backlink|high\s*traffic|bot\s*human).*
+
+# Block shell and SEO spam backlinks
+RewriteCond %{REQUEST_URI} (shell|seo|backlink|traffic|bot|human|jingling) [NC]
+RewriteRule .* - [F,L]
+
+# Block specific spam domains and paths
+RedirectMatch 403 (?i).*(masmubata-bata\.com|sainttheresa\.ac\.id|pn-tilamuta\.go\.id|politikamalang\.com|belanjamalang\.com).*
+RedirectMatch 403 (?i).*(creativity|wisuda|silamu|pengaduan|ecuti|delegasi).*
+RedirectMatch 403 (?i).*(wp-includes|ID3|IXR|action|amp-unirow).*
+
+# Block specific email addresses
+RedirectMatch 403 (?i).*cherlinemerline@gmail\.com.*
+
+# Block shell and SEO terms
+RedirectMatch 403 (?i).*(shell\s*for\s*seo|seo\s*backlink|high\s*traffic|bot\s*human).*
+
+# Custom error for blocked requests
+ErrorDocument 403 "Access Denied - Suspicious Activity Detected"
 </IfModule>
 
-# ================== PROTEKSI TAMBAHAN ================== #
-# <IfModule mod_headers.c>
-#     # Blokir embed dari domain judi
-#     Header set Content-Security-Policy "default-src 'self'; frame-src 'none'; frame-ancestors 'self'; form-action 'self'"
-# </IfModule>
