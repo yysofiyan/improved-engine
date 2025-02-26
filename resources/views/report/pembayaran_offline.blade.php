@@ -49,7 +49,7 @@
     <p style="font-size:14px;text-align:center;font-weight: bold;margin-top:50px;">
         ===================================================================================</p>
     <p style="font-size:14px;text-align:center">Panitia Penerimaan Mahasiswa Baru (PMB) Universitas Sebelas April dan
-        STAI Sebelas April Sumedang <br /> Tahun 2024 </p>
+        STAI Sebelas April Sumedang <br /> Tahun 2025 </p>
     @php
         $i = 1;
         $jumlah = 0;

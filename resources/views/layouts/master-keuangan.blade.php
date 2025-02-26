@@ -20,12 +20,12 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('keuangan/buatpin') }}">
                             <i class="fa-solid fa-window-restore fa-fw mr-2"></i>
                             <span class="menu-title">Buat PIN</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('keuangan/transaksi') }}">

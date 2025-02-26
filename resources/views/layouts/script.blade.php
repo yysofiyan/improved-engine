@@ -10,6 +10,8 @@
 
 <script src="{{ url('theme/js/dashboard.js')}}"></script>
   <script src="{{ url('theme/js/Chart.roundedBarCharts.js')}}"></script>
+  <!-- Library ApexCharts untuk membuat visualisasi grafik yang interaktif -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 

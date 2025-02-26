@@ -316,7 +316,7 @@
                                                             <span class="badge badge-info">Opsional</span>
                                                         @else
                                                             <span class="text-danger">*</span>
-                                                            <span class="badge badge-info">Wajib untuk Reguler S1</span>
+                                                            <span class="badge badge-info">Wajib untuk Reguler/Lanjutan S1</span>
                                                         @endif
                                                     </strong>
                                                 </label>

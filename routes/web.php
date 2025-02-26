@@ -19,6 +19,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\File;
+use App\Http\Controllers\StatistikController;
 
 /*
 |--------------------------------------------------------------------------
@@ -524,6 +525,14 @@ Route::put('/keuangan/konfirmasi/{id}/verifikasi', [KeuanganController::class, '
      
 Route::post('/keuangan/konfirmasi/{id}/reminder', [KeuanganController::class, 'reminder'])
      ->name('keuangan.konfirmasi.reminder');
+
+Route::get('/info-pendaftaran', function() {
+    return view('maba.info-pendaftaran')->layout('layouts.without-sidebar');
+})->name('info.pendaftaran');
+
+Route::get('/data-stories', [StatistikController::class, 'index'])->name('data-stories.index');
+
+Route::get('/operator/filter-pin-by-year', [OperatorController::class, 'filterPinByYear'])->name('operator.filter_pin_by_year');
 
 
 

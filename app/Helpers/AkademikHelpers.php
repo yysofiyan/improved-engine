@@ -223,7 +223,7 @@ class AkademikHelpers {
     {
         return Neomahasiswa::where('kodeprodi_satu', $kode)
             ->where('pin', '<>', '')
-            ->whereBetween('created_at', ['2024-03-01', '2025-02-28'])
+            ->whereBetween('created_at', ['2024-03-01', '2024-12-31'])
             ->count();
     }
 
@@ -356,7 +356,7 @@ class AkademikHelpers {
         $totalPendaftar = Neomahasiswa::query()
             ->whereNotNull('pin') // Hanya yang memiliki PIN
             ->whereDate('created_at', '<=', $tanggalAkhir) // Sampai 31 Desember 2024
-            ->whereDate('created_at', '>=', $tanggalAwal) // Mulai 1 Februari 2024
+            ->whereDate('created_at', '>=', $tanggalAwal) // Mulai 3 Marer 2024
             ->count();
             
         return $totalPendaftar;
@@ -737,6 +737,16 @@ class AkademikHelpers {
             'FIB', 'FTI', 'FIKES', 'STAI SAS'
         ];
     }
+public static function getPendaftarHarian2024() {
+    return Neomahasiswa::whereDate('created_at', today())
+        ->whereYear('created_at', 2024)
+        ->count();
+}
+public static function getPendaftarHarian2025() {
+    return Neomahasiswa::whereDate('created_at', today())
+        ->whereYear('created_at', 2025)
+        ->count();
+}
 
     /**
      * Mendapatkan statistik pendaftaran tahun 2024 per bulan
@@ -755,3 +765,4 @@ class AkademikHelpers {
     }
 
 }
+

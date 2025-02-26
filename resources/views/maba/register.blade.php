@@ -21,8 +21,6 @@
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
         crossorigin="anonymous" 
         referrerpolicy="no-referrer" />
-    <!-- Load Tailwind CSS dari CDN -->
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 </head>
 
 <div class="container-fluid page-body-wrapper full-page-wrapper">
@@ -37,11 +35,11 @@
                             </div>
                         @endif
                         
-                        <div class="alert alert-error" role="alert">
+                        {{-- <div class="alert alert-error" role="alert">
                             <!-- <a href="{{ url('files/flyer_unsap_2024.pdf') }}" class="btn btn-warning" target="_blank"> 
                                 <i class="fa-solid fa-receipt fa-fw mr-2"></i> Download Brosur PMB
                             </a> -->
-                        </div>
+                        </div> --}}
 
                         <div class="text-center mb-4">
                             <div class="d-flex flex-column align-items-center">
@@ -50,14 +48,15 @@
                                      class="logo mb-3" 
                                      style="width: 100px; height: auto;">
                                 
-                                <div class="d-flex justify-content-center align-items-center mb-4 text-daintree">
+                                <div class="d-flex justify-content-center align-items-center mb-4">
                                     <div class="text-end pe-3">
                                         <h6 class="m-0 text-uppercase fw-bold">pmb</h6>
-                                        <h6 class="m-0 text-uppercase fw-bold">{{ env('TAHUN_AKTIF')}}</h6>
+                                        {{-- <h6 class="m-0 text-uppercase fw-bold">{{ env('TAHUN_AKTIF')}}</h6> --}}
+                                        <h6 class="m-0 text-uppercase fw-bold">{{ date('Y') }}</h6>
                                     </div>
-                                    <div class="border-l-4 border-yellow-400 pl-3">
-                                        <h6 class="m-0 font-bold">Sistem Penerimaan Mahasiswa Baru</h6>
-                                        <h6 class="m-0 font-bold">Universitas Sebelas April</h6>
+                                    <div class="border-start border-3 border-warning ps-3">
+                                        <h6 class="m-0 font-weight-bold">Sistem Penerimaan Mahasiswa Baru</h6>
+                                        <h6 class="m-0 font-weight-bold">Universitas Sebelas April</h6>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +64,7 @@
 
                         <hr>
 
-                        <form id="MabaForm" name="MabaForm" class="space-y-4">
+                        <form id="MabaForm" name="MabaForm">
                             <!-- Field NIK -->
                             <div class="form-group">
                                 <label class="font-weight-bold text-uppercase">Nomor Induk Kependudukan (NIK)</label>

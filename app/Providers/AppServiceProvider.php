@@ -53,26 +53,26 @@ class AppServiceProvider extends ServiceProvider
          * - startDate: tanggal mulai pendaftaran
          * - endDate: tanggal berakhirnya pendaftaran
          */
-        View::composer('maba.register', function ($view) {
-            $start = Carbon::parse(env('REG_START'));
-            $end = Carbon::parse(env('REG_END'));
+        // View::composer('maba.register', function ($view) {
+        //     $start = Carbon::parse(env('REG_START'));
+        //     $end = Carbon::parse(env('REG_END'));
             
-            $now = Carbon::now();
+        //     $now = Carbon::now();
             
-            $diff = $start->diff($now);
+        //     $diff = $start->diff($now);
             
-            $view->with([
-                'registrationOpen' => $now->between($start, $end),
-                'countdown' => [
-                    'days' => $diff->days,
-                    'hours' => $diff->h,
-                    'minutes' => $diff->i,
-                    'seconds' => $diff->s,
-                    'total_seconds' => $now->diffInSeconds($start)
-                ],
-                'startDate' => $start,
-                'endDate' => $end
-            ]);
-        });
+        //     $view->with([
+        //         'registrationOpen' => $now->between($start, $end),
+        //         'countdown' => [
+        //             'days' => $diff->days,
+        //             'hours' => $diff->h,
+        //             'minutes' => $diff->i,
+        //             'seconds' => $diff->s,
+        //             'total_seconds' => $now->diffInSeconds($start)
+        //         ],
+        //         'startDate' => $start,
+        //         'endDate' => $end
+        //     ]);
+        // });
     }
 }

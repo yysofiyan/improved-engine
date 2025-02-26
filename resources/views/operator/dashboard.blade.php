@@ -377,7 +377,7 @@
     </div>
   </div>
 
-  <div class="row">
+  {{-- <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
@@ -385,7 +385,7 @@
           <p class="card-title">Rekap Pendaftaran PMB Tahun 2024</p>
           {{-- <a href="{{ route('export.pendaftaran.2024') }}" class="btn btn-success btn-flat">
             <i class="mdi mdi-file-excel"></i> Export 2024 --}}
-          </a>
+          {{-- </a>
          </div>
          <p class="font-weight-800">Per Tanggal : {{ now()->day }} {{ now()->translatedFormat('F') }} 2024</p>
           <p class="font-weight-500">Jumlah Pendaftaran Calon Mahasiswa Baru UNSAP</p>
@@ -417,18 +417,18 @@
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('8813') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('8813') }}</td>
                     
-                  </tr> 
+                  </tr>  --}}
 
-                  <tr>
+                  {{-- <tr>
                     <td></td>
                     <td>Pendidikan Matematika (S2)</td>
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar2('84102') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('84102') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('84102') }}</td>
                     
-                  </tr> 
+                  </tr>  --}}
 
-
+{{-- 
                   <tr>
                     <td></td>
                     <td>Pendidikan Bahasa dan Sastra Indonesia (S1)</td>
@@ -437,9 +437,9 @@
                     
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('5b3ff355-1e20-4c1d-8b47-e559b6991036') }}</td>
                     
-                  </tr> 
+                  </tr>  --}}
 
-                  <tr>
+                  {{-- <tr>
                     <td></td>
                     <td>Pendidikan Guru Pendidikan Anak Usia Dini (S1)</td>
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar2('f48cbc83-b3c6-4e66-9e68-209b52a275e4') }} </td>
@@ -453,8 +453,8 @@
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar2('eca49026-745e-451c-8121-bfc81d4e9fe4') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('eca49026-745e-451c-8121-bfc81d4e9fe4') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('eca49026-745e-451c-8121-bfc81d4e9fe4') }}</td>
-                  </tr> 
-
+                  </tr>  --}}
+{{-- 
                   <tr>
                     <td></td>
                     <td>Pendidikan Jasmani Kesehatan dan Rekreasi (S1)</td>
@@ -477,11 +477,11 @@
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar2('2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('2cadf663-1d4c-4fd4-9457-6fc2b50bd1b3') }}</td>
-                  </tr> 
+                  </tr>  --}}
 
                   
 
-                  <tr>
+                  {{-- <tr>
                     <td>2</td>
                     <td><b>Fakultas Ilmu Budaya</b></td>
                     <td class="text-center"></td>
@@ -561,8 +561,8 @@
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('93366fa0-45df-457c-a723-01b78226ad34') }}</td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getLulus2('93366fa0-45df-457c-a723-01b78226ad34') }}</td>
                   </tr> 
-                  <tr>
-                    <td></td>
+                  <tr> --}}
+                    {{-- <td></td>
                     <td>Ilmu Keperawatan (S1)</td>
                     <td class="text-center"> {{ \App\Helpers\AkademikHelpers::getDaftar2('303e6a30-c87a-4f70-8431-8ccc03b058f4') }} </td>
                     <td class="text-center">{{ \App\Helpers\AkademikHelpers::getTotalPin2('303e6a30-c87a-4f70-8431-8ccc03b058f4') }}</td>
@@ -636,7 +636,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>  --}}
 
 @endsection
 
