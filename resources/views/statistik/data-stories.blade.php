@@ -94,23 +94,32 @@
 
     <div class="row mt-4">
         <div class="col-md-12">
-            <div class="card mb-6">
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Data Pendaftar Berdasarkan Asal Sekolah</h5>
+                    <form method="GET" class="form-inline">
+                        <div class="input-group" style="gap: 8px;">
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="search_sekolah" 
+                                   placeholder="Cari nama sekolah..." 
+                                   value="{{ request('search_sekolah') }}"
+                                   style="margin-right: 8px;">
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">Data Pendaftar Berdasarkan Asal Sekolah</h5>
-
-                    <!-- Form Pilih Tahun -->
-                    <div class="mb-4">
-                        <form action="{{ route('data-stories.index') }}" method="GET">
-                            <div class="input-group">
-                                <select name="tahun" class="form-select" onchange="this.form.submit()">
-                                    @for ($i = date('Y'); $i >= 2025; $i--)
-                                        <option value="{{ $i }}" {{ $tahun == $i ? 'selected' : '' }}>{{ $i }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-
+                    @if(request()->has('search_sekolah') && !empty(request('search_sekolah')))
+                        <div class="alert alert-info mx-3 mt-2">
+                            Menampilkan hasil pencarian untuk: <strong>"{{ request('search_sekolah') }}"</strong>
+                            <a href="{{ request()->fullUrlWithQuery(['search_sekolah' => null]) }}" class="float-right">
+                                <i class="fas fa-times"></i> Reset
+                            </a>
+                        </div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -144,7 +153,7 @@
 
                     <!-- Pagination -->
                     <div class="mt-4">
-                        {{ $asalSekolahData->appends(['tahun' => $tahun, 'search' => request('search')])->links() }}
+                        {{ $asalSekolahData->appends(['search_sekolah' => request('search_sekolah')])->links() }}
                     </div>
                 </div>
             </div>
