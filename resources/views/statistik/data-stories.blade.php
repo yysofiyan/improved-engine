@@ -6,12 +6,33 @@
     <div class="container-fluid">
 
         <h1 class="text-center mb-4 text-gray-800 dark:text-white forced-color-adjust-auto">
-            Data Stories Pendaftaran Mahasiswa Baru Universitas Sebelas April<br> 
+            Pendaftaran Mahasiswa Baru Universitas Sebelas April<br> 
             Tahun Akademik 2025/2026
         </h1>
         <!-- Informasi Waktu Realtime -->
         <p class="text-center mb-4 text-gray-600 dark:text-gray-300 forced-color-adjust-auto">Data diperbarui secara realtime : <span id="realtime"
                 class="font-medium text-gray-800 dark:text-gray-100"></span> WIB</p>
+        {{-- <div class="row mb-4">
+            <!-- Card Operator Online -->
+            <div class="col-md-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Operator Online</h5>
+                        <h2 class="card-text">{{ number_format($onlineOperators, 0) }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Pendaftar Online -->
+            <div class="col-md-4">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Pendaftar Online</h5>
+                        <h2 class="card-text">{{ number_format($onlineApplicants, 0) }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
 
         <!-- Card Section -->
         <div class="row mb-4">

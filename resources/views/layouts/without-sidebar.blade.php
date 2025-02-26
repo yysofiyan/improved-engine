@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistem Penerimaan Mahasiswa Baru UNSAP">
+    <meta name="description" content="Sistem Penerimaan Mahasiswa Baru UNSAP - Portal resmi penerimaan mahasiswa baru Universitas Sebelas April">
+    <meta name="keywords" content="PMB UNSAP, Pendaftaran Mahasiswa Baru, Universitas Sebelas April, Seleksi Mahasiswa Baru">
     <meta name="author" content="yysofiyan">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="PMB UNSAP - Sistem Penerimaan Mahasiswa Baru">
+    <meta property="og:description" content="Portal resmi penerimaan mahasiswa baru Universitas Sebelas April">
+    <meta property="og:image" content="{{ asset('images/logo-importer-mini.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logo-importer-mini.png') }}">
 
     <title>@yield('title') - PMB UNSAP</title>
 
@@ -47,8 +56,8 @@
                             
                             <!-- Menu Informasi -->
                             <div class="flex-1 flex items-center justify-center md:justify-start">
-                                <a href="/informasi" class="bg-gray-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                                    <i class="fas fa-info-circle mr-2"></i>Informasi
+                                <a href="/data-stories" class="bg-gray-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    <i class="fas fa-info-circle mr-2"></i>Data Stories
                                 </a>
                             </div>
 
