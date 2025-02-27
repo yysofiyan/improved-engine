@@ -158,9 +158,9 @@
                                             <td class="text-center">
                                                 {{ ($asalSekolahData->currentPage() - 1) * $asalSekolahData->perPage() + $index + 1 }}
                                             </td>
-                                            <td>{{ $sekolah->asal_sekolah }}</td>
+                                            <td>{{ $sekolah->asal_sekolah ?? 'N/A' }}</td>
                                             {{-- <td class="text-center">{{ $sekolah->kode_pt_asal }}</td> --}}
-                                            <td class="text-center">{{ number_format($sekolah->total, 0) }}</td>
+                                            <td class="text-center">{{ number_format($sekolah->total_pendaftar, 0) }}</td>
                                         </tr>
                                     @endforeach
                                 @else

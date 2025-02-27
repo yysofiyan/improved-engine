@@ -73,15 +73,14 @@ class StatistikController extends Controller
 
         // Data Asal Sekolah dengan filter tahun
         $tahun = $request->tahun ?? date('Y'); // Default tahun sekarang
-        $asalSekolahData = Neomahasiswa::selectRaw('asal_sekolah, kode_pt_asal, count(*) as total')
+        $asalSekolahData = Neomahasiswa::selectRaw('asal_sekolah, COUNT(*) as total_pendaftar')
             ->whereYear('created_at', $tahun)
-            ->whereNotNull('kode_pt_asal')
             ->when($request->search_sekolah, function($query) use ($request) {
                 $query->where('asal_sekolah', 'like', '%'.$request->search_sekolah.'%');
             })
-            ->groupBy('asal_sekolah', 'kode_pt_asal')
-            ->orderByDesc('total')
-            ->paginate(10);
+            ->groupBy('asal_sekolah')
+            ->orderByDesc('total_pendaftar')
+            ->paginate(15);
 
         return view('statistik.data-stories', compact(
             'totalPendaftar',
