@@ -87,7 +87,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($status_pembayaran == 'Gratis')
+                    {{-- @if($status_pembayaran == 'Gratis')
                         <div class="alert alert-success">
                             <h4 class="text-center">🎉 Pendaftaran Gratis Aktif</h4>
                             <p class="text-center mb-0">Anda tidak perlu upload bukti pembayaran</p>
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                         @endif
-                    @endif
+                    @endif --}}
                     <form method="POST" id="UploadBuktiForm" name="UploadBuktiForm" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
