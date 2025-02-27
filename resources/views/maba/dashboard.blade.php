@@ -60,14 +60,24 @@
                             </li>
                         </ol>
                     </div>
-                    @if ($konfirmasi->verified == '11')
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="alert alert-success" role="alert">
-                                    <h4 class="text-center font-weight-bold m-0">Bukti Bayar Sudah Di Validasi</h4>
+                    @if($konfirmasi)
+                        @if($konfirmasi->verified == 11)
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="alert alert-success" role="alert">
+                                        <h4 class="text-center font-weight-bold m-0">Bukti Bayar Sudah Di Validasi</h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="alert alert-danger" role="alert">
+                                        <h4 class="text-center font-weight-bold m-0">Bukti Bayar Belum Di Validasi</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @else
                         <div class="row mb-4">
                             <div class="col-12">
@@ -76,6 +86,29 @@
                                 </div>
                             </div>
                         </div>
+                    @endif
+                    @if($status_pembayaran == 'Gratis')
+                        <div class="alert alert-success">
+                            <h4 class="text-center">🎉 Pendaftaran Gratis Aktif</h4>
+                            <p class="text-center mb-0">Anda tidak perlu upload bukti pembayaran</p>
+                        </div>
+                    @else
+                        @if($konfirmasi && $konfirmasi->bukti_bayar == 'no_image.png')
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Upload Bukti Pembayaran</h5>
+                                    <!-- Form upload bukti bayar -->
+                                    <form id="formUpload" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label>Bukti Transfer</label>
+                                            <input type="file" class="form-control" name="bukti_bayar" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Upload Bukti</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                     <form method="POST" id="UploadBuktiForm" name="UploadBuktiForm" enctype="multipart/form-data">
                         {{ csrf_field() }}
@@ -87,7 +120,7 @@
                                     name="id_channel" data-display="static">
                                     @foreach ($id_channel as $id_channel)
                                         <option value="{{ $id_channel->id_channel }}"
-                                            {{ $konfirmasi->id_channel == $id_channel->id_channel ? 'selected' : '' }}>
+                                            {{ isset($konfirmasi) && $konfirmasi->id_channel == $id_channel->id_channel ? 'selected' : '' }}>
                                             {{ $id_channel->nama_channel }}
                                         </option>
                                     @endforeach
@@ -104,7 +137,7 @@
                                 <label>Tanggal Bayar</label>
                                 <input type="date" class="form-control form-control-danger" name="tanggal_bayar"
                                     data-date-format="yyyy-mm-dd"
-                                    value="{{ old('tanggal_bayar', $konfirmasi->tanggal_bayar) }}">
+                                    value="{{ old('tanggal_bayar', $konfirmasi ? $konfirmasi->tanggal_bayar : '') }}">
                             </div>
                         </div>
 
@@ -112,7 +145,7 @@
                             <div class="form-group col-lg-6 @error('pin') has-danger @enderror">
                                 <label>Nama Rekening Pengirim</label>
                                 <input type="text" name="nama_rekening_pengirim"
-                                    value="{{ old('nama_rekening_pengirim', $konfirmasi->nama_rekening_pengirim) }}"
+                                    value="{{ old('nama_rekening_pengirim', $konfirmasi ? $konfirmasi->nama_rekening_pengirim : '') }}"
                                     class="form-control @error('nama_rekening_pengirim') is-invalid @enderror"
                                     placeholder="Masukkan Nama Rekening Pengirim">
                                 @error('nama_rekening_pengirim')
@@ -125,7 +158,7 @@
                             <div class="form-group col-lg-6 @error('pin') has-danger @enderror">
                                 <label style="font-style: italic;">Upload Bukti Bayar (Maks. 1MB, format:
                                     png/jpg/pdf)</label>
-                                @if ($konfirmasi->verified == '11')
+                                    @if ($konfirmasi && $konfirmasi->verified == 11 && $konfirmasi->bukti_bayar != 'no_image.png')
                                     <br />
                                 @else
                                     <input type="file" name="bukti_bayar"
@@ -135,15 +168,17 @@
                                 @error('bukti_bayar')
                                     <label class="error mt-2 text-danger">{{ $message }}</label>
                                 @enderror
-                                @if ($konfirmasi->bukti_bayar != 'no_photo.png')
-                                    <label class="info mt-2 text-white"><a
-                                            href="{{ url('images/pmb/' . $konfirmasi->bukti_bayar) }}" target="_blank"
-                                            class="badge badge-primary"> Lihat Bukti Bayar</a></label>
+                                @if ($konfirmasi && $konfirmasi->verified == 11 && $konfirmasi->bukti_bayar != 'no_image.png')
+                                    <div class="mt-2">
+                                        <a href="{{ url('images/pmb/' . $konfirmasi->bukti_bayar) }}" target="_blank" class="btn btn-primary btn-sm">
+                                            <i class="mdi mdi-eye"></i> Tampilkan Bukti Bayar
+                                        </a>
+                                    </div>
                                 @endif
 
                             </div>
                         </div>
-                        @if ($konfirmasi->verified == '11')
+                        @if ($status_pembayaran == 'Lunas')
                         @else
                             <div class="text-left">
                                 <button type="submit" id="saveUpload" class="btn btn-primary">Upload Bukti Bayar</button>
@@ -1016,7 +1051,7 @@
                                                 in_array($mhs->jenis_daftar, [1,2,6]) || 
                                                 ($mhs->jenis_daftar == 1 && $mhs->prodi && $mhs->prodi->nama_jenjang !== 'S-2' && !empty($mhs->nisn)) ||
                                                 (\App\Helpers\AkademikHelpers::getFakultas($mhs->kodeprodi_satu) == '13')
-                                            )
+                                                )
                                                 <small class="form-text text-muted">Maksimal ukuran file upload: 2 MB</small>
                                                 <br>
                                                 <button type="submit" class="btn btn-success" id="btnImport">Submit</button>
@@ -1113,8 +1148,6 @@
 
 
                             </div>
-
-
 
 
                         </div>

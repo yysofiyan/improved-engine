@@ -140,14 +140,20 @@ class MabaController extends Controller
         ->orderBy('nama_wilayah')
         ->get();
 
-        $transaksi= DB::table('transaksis')
-        ->where('pin','=',session('pin'))
-        ->first();
+        $transaksi = DB::table('transaksis')
+            ->where('pin', session('pin'))
+            ->first();
 
-        $konfirmasi=DB::table('konfirmasi_pembayarans')
-        ->where('transaksi_id','=',$transaksi->id)
-        ->first();
+        $konfirmasi = null;
+        $status_pembayaran = 'Belum Bayar';
 
+        if ($transaksi) {
+            $konfirmasi = DB::table('konfirmasi_pembayarans')
+                ->where('transaksi_id', $transaksi->id)
+                ->first();
+            
+            $status_pembayaran = ($transaksi->status == 11) ? 'Gratis' : (($konfirmasi && $konfirmasi->verified == 11) ? 'Lunas' : 'Belum Bayar');
+        }
 
         return view('maba/dashboard',[
             'mhs' => $pendaftar,
@@ -163,8 +169,8 @@ class MabaController extends Controller
             'sekolah'=>$sekolah,
             'konfirmasi'=>$konfirmasi,
             'persyaratan'=>$persyaratan,
-            'soal'=>$soal
-
+            'soal'=>$soal,
+            'status_pembayaran' => $status_pembayaran
         ]);
     }
 
@@ -336,8 +342,6 @@ class MabaController extends Controller
         $prodi = DB::table('pe3_prodi')
             ->join('pe3_fakultas', 'pe3_prodi.kode_fakultas', '=', 'pe3_fakultas.kode_fakultas')
             ->select('pe3_prodi.*', 'pe3_fakultas.nama_fakultas')
-            ->whereNotNull('pe3_prodi.nama_prodi')
-            ->whereNotNull('pe3_fakultas.nama_fakultas')
             ->orderBy('pe3_fakultas.urut')
             ->get();
 
@@ -348,127 +352,93 @@ class MabaController extends Controller
 
     public function simpandaftar(Request $request)
     {
-        $validatedData = $request->validate([
+        // Tambahkan periode gratis
+        $periodeGratis = [
+            'start' => '2024-02-01', // Format YYYY-MM-DD
+            'end' => '2024-03-01'
+        ];
+        
+        $isGratis = Carbon::now()->between($periodeGratis['start'], $periodeGratis['end']);
+
+        $request->validate([
             'nik' => 'required|unique:neomahasiswas|min:16|max:16',
             'nama_mahasiswa' => 'required',
-            //'captcha' => 'required|captcha',
             'jenis_kelamin' => 'required',
             'handphone' => 'required|starts_with:8|min:10',
-            'kodeprodi_satu' => [
-                'required',
-                'exists:pe3_prodi,kode_prodi',
-                function ($attribute, $value, $fail) {
-                    $prodi = DB::table('pe3_prodi')
-                        ->join('pe3_fakultas', 'pe3_prodi.kode_fakultas', '=', 'pe3_fakultas.kode_fakultas')
-                        ->where('pe3_prodi.kode_prodi', $value)
-                        ->whereNotNull('pe3_prodi.nama_prodi')
-                        ->whereNotNull('pe3_fakultas.nama_fakultas')
-                        ->exists();
-                        
-                    if (!$prodi) {
-                        $fail('Program studi yang dipilih tidak valid');
-                    }
-                }
-            ],
-        ], [
-            'kodeprodi_satu.required' => 'Kolom program studi wajib dipilih',
-            'kodeprodi_satu.exists' => 'Program studi yang dipilih tidak valid'
+            'kodeprodi' => 'required',
         ]);
 
         try {
+            $id=Uuid::uuid4()->toString();
+            $id_transaksi=Uuid::uuid4()->toString();
+            $gen_satu=$this->generatePin();
+            $hp=$request->handphone;
+            $pin=$gen_satu.''.substr($hp,-4);
 
-                $id=Uuid::uuid4()->toString();
-                $id_transaksi=Uuid::uuid4()->toString();
-                $gen_satu=$this->generatePin();
-                $hp=$request->handphone;
-                $pin=$gen_satu.''.substr($hp,-4);
+            $table="neomahasiswas";
+            $primary="nomor_pendaftaran";
+            $prefix="2025";
+            $tipe='1';
+            $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
 
-                $table="neomahasiswas";
-			    $primary="nomor_pendaftaran";
-			    $prefix="2025";
-                $tipe='1';
-			    $no_daftar=$this->autonumber($table,$primary,$prefix,$tipe);
+            Neomahasiswa::Create([
+            'id' => $id,
+            'nik' => $request->nik,
+            'nama_mahasiswa' => $request->nama_mahasiswa,
+            'jenis_kelamin' => $request->jenis_kelamin,'handphone'=>$request->handphone,'kodeprodi_satu'=>$request->kodeprodi,'pin'=>$pin,'nomor_pendaftaran'=>$no_daftar
+        ]);
 
-                Neomahasiswa::Create([
-                'id' => $id,
-                'nik' => $request->nik,
-                'nama_mahasiswa' => $request->nama_mahasiswa,
-                'jenis_kelamin' => $request->jenis_kelamin,'handphone'=>$request->handphone,'kodeprodi_satu'=>$request->kodeprodi,'pin'=>$pin,'nomor_pendaftaran'=>$no_daftar
-            ]);
+        $request->session()->put([
+            'id' => $id,
+            'pin' => $pin,
+            'nomor_pendaftaran' => $no_daftar,
+            'nik' => $request->nik,
+            'nama_mahasiswa' => $request->nama_mahasiswa,
+            'handphone' => $request->handphone,
+            'is_aktif' => '12',
+        ]);
+        $now = \Carbon\Carbon::now()->toDateTimeString();
+        $no_transaksi='101'.date('YmdHms');
 
-            $request->session()->put([
-                'id' => $id,
-                'pin' => $pin,
-                'nomor_pendaftaran' => $no_daftar,
-                'nik' => $request->nik,
-                'nama_mahasiswa' => $request->nama_mahasiswa,
-                'handphone' => $request->handphone,
-                'is_aktif' => '12',
-            ]);
-            $now = \Carbon\Carbon::now()->toDateTimeString();
-            $no_transaksi='101'.date('YmdHms');
-            Transaksi::create([
-				'id'=>$id_transaksi,
-				'pin'=>$pin,
-				'no_transaksi'=>$no_transaksi,
-				'nomor_rekening'=>'101',
-				'status'=>'10',
-				'total'=>'200000',
-				'tanggal'=>$now,
-				'desc'=>'Pendaftaran Online',
-				'created_at'=>$now,
-			]);
+        // Logika transaksi
+        if($isGratis) {
+            $totalBayar = 0;
+            $statusTransaksi = 11; // Status gratis
+            $message = 'Hai, Kak *'.$request->nama_mahasiswa.'* , Selamat Anda Mendapatkan Gratis Biaya Pendaftaran...';
+        } else {
+            $totalBayar = 200000;
+            $statusTransaksi = 10; // Status belum bayar
+            $message = 'Hai, Kak *'.$request->nama_mahasiswa.'* , Setelah melakukan pendaftaran segera upload bukti pembayaran...';
+        }
 
-            KonfirmasiPembayaran::create([
-				'transaksi_id'=>$id_transaksi,
-				'total_bayar'=>'200000',
-                'id_channel'=>'4',
-                'tanggal_bayar'=>$now,
-                'nama_rekening_pengirim'=>'',
-                'bukti_bayar'=>'no_image.png',
-                'tanggal'=>$now,
-				'desc'=>'Pendaftaran Online',
-                'verified'=>'10',
-                'created_at'=>$now,
-			]);
+        $transaksi = Transaksi::create([
+            'id' => $id_transaksi,
+            'pin' => $pin,
+            'no_transaksi' => $no_transaksi,
+            'nomor_rekening' => '101',
+            'status' => $statusTransaksi,
+            'total' => $totalBayar,
+            'tanggal' => $now,
+            'desc' => 'Pendaftaran Online',
+            'created_at' => $now,
+        ]);
 
-            /* Transaksi::create([
-				'id'=>$id_transaksi,
-				'pin'=>$pin,
-				'no_transaksi'=>$no_transaksi,
-				'nomor_rekening'=>'101',
-				'status'=>'11',
-				'total'=>'0',
-				'tanggal'=>$now,
-				'desc'=>'Pendaftaran Online Gratis',
-				'created_at'=>$now,
-			]);
+        KonfirmasiPembayaran::create([
+            'transaksi_id' => $transaksi->id,
+            'total_bayar' => $totalBayar,
+            'id_channel' => '4',
+            'tanggal_bayar' => $now,
+            'nama_rekening_pengirim' => '',
+            'bukti_bayar' => $isGratis ? null : 'no_image.png',
+            'tanggal' => $now,
+            'desc' => 'Pendaftaran Online',
+            'verified' => $isGratis ? 11 : 10,
+            'created_at' => $now,
+        ]);
 
-            KonfirmasiPembayaran::create([
-				'transaksi_id'=>$id_transaksi,
-				'total_bayar'=>'0',
-                'id_channel'=>'4',
-                'tanggal_bayar'=>$now,
-                'nama_rekening_pengirim'=>'Pendaftaran Gratis',
-                'bukti_bayar'=>'no_image.png',
-                'tanggal'=>$now,
-				'desc'=>'Pendaftaran Online Gratis',
-                'verified'=>'11',
-                'created_at'=>$now,
-			]);
-            Neomahasiswa::updateOrCreate(
-                [ 'pin'=>$pin],
-                [
-                    'is_aktif'=>'1',
-                ]
-                );  */
+        AkademikHelpers::kirimWA('62'.$request->handphone, $message);
 
-            $message='Hai, Kak *'.$request->nama_mahasiswa.'* , Setelah melakukan pendaftaran segera upload bukti pembayaran dengan Login di alamat : *https://admission.unsap.ac.id/login-maba* %0amenggunakan Nomor Handphone *'.$request->handphone.'*  dan Pin *'.$pin.'* agar Mimin segera mengaktifkan pin setelah upload bukti bayar dan selangkah lagi kaka menjadi Calon Mahasiswa Baru UNSAP.  %0a%0aTerima Kasih :) ';
-            //$message='Hai, Kak *'.$request->nama_mahasiswa.'* , Selamat Anda Mendapatkan Gratis Biaya Pendaftaran. Silahkan login di alamat : *https://admission.unsap.ac.id/login-maba* %0amenggunakan Nomor Handphone *'.$request->handphone.'*  dan Pin *'.$pin.'* Setelah berhasil masuk, isi formulir dan upload persyaratan.  %0a%0aTerima Kasih :) ';
-
-            AkademikHelpers::kirimWA('62'.$request->handphone,$message);
-
-            return response()->json(['status'=>'200','success'=>'Data Sukses di Simpan'.$pin]);
+        return response()->json(['status'=>'200','success'=>'Data Sukses di Simpan'.$pin]);
 
         } catch (Exception $e) {
             return response()->json(['status'=>'200','success'=>$e->getMessage()]);

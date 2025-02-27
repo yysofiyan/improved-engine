@@ -64,6 +64,20 @@
 
                         <hr>
 
+                        @php
+                            $periodeGratis = [
+                                'start' => '2024-02-01', // Format YYYY-MM-DD
+                                'end' => '2024-03-01'
+                            ];
+                            $isGratis = now()->between($periodeGratis['start'], $periodeGratis['end']);
+                        @endphp
+
+                        @if($isGratis)
+                            <div class="alert alert-info mb-4">
+                                <h4 class="text-center">🔥 Pendaftaran Gratis 28 Februari 2025 - 1 Maret 2025 🔥</h4>
+                            </div>
+                        @endif
+
                         <form id="MabaForm" name="MabaForm">
                             <!-- Field NIK -->
                             <div class="form-group">
@@ -133,14 +147,21 @@
 
                             <!-- Field Program Studi -->
                             <div class="form-group">
-                                <label class="font-weight-bold text-uppercase">Fakultas / Program Studi</label>
-                                <select class="form-control" name="kodeprodi_satu" required>
+                                <label class="font-weight-bold text-uppercase">Fakultas / Program Studi <span class="text-danger">*</span></label>
+                                <select class="form-control @error('kodeprodi') form-control-danger @enderror" name="kodeprodi" data-display="static" required>
+                                    <option value="" disabled selected>-- Pilih Program Studi --</option>
                                     @foreach ($prodi as $item)
-                                        <option value="{{ $item->kode_prodi }}">
-                                            {{ ($item->nama_fakultas ?? '') .' - '. ($item->nama_prodi ?? '') }}
+                                        <option value="{{ $item->config }}">
+                                            {{ $item->nama_fakultas.' - '.$item->nama_prodi.' ('.$item->nama_jenjang.')' }}
                                         </option>
                                     @endforeach
                                 </select>
+
+                                @error('kodeprodi')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>    
+                                @enderror
                             </div>
 
                             <!-- Field Captcha -->
