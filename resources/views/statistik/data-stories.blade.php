@@ -93,7 +93,7 @@
             <div class="col-12 col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">Distribusi Pendaftar Per Fakultas 2025</h5>
+                        <h5 class="card-title">TOP 5 Pendaftar Per Fakultas 2025</h5>
                         <div id="topFakultasChart" class="chart-container" style="height: 300px;"></div>
                     </div>
                 </div>
@@ -526,11 +526,11 @@
         setInterval(updateRealtime, 1000);
         updateRealtime(); // Panggil fungsi pertama kali
 
-        // Auto-refresh setiap 1 menit
-        // untuk refresh data secara realtime
-        setInterval(() => {
-            window.location.reload();
-        }, 60000);
+        // // Auto-refresh setiap 1 menit
+        // // untuk refresh data secara realtime
+        // setInterval(() => {
+        //     window.location.reload();
+        // }, 60000);
     </script>
 
    

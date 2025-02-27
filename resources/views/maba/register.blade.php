@@ -134,20 +134,13 @@
                             <!-- Field Program Studi -->
                             <div class="form-group">
                                 <label class="font-weight-bold text-uppercase">Fakultas / Program Studi</label>
-                                <select class="form-control @error('kodeprodi_satu') is-invalid @enderror" 
-                                        name="kodeprodi_satu" required>
-                                    <option value="">-- Pilih Program Studi --</option>
+                                <select class="form-control" name="kodeprodi_satu" required>
                                     @foreach ($prodi as $item)
-                                        <option value="{{ $item->kode_prodi }}" {{ old('kodeprodi_satu') == $item->kode_prodi ? 'selected' : '' }}>
-                                            {{ $item->nama_fakultas.' - '.$item->nama_prodi.' ('.$item->nama_jenjang.')' }}
+                                        <option value="{{ $item->kode_prodi }}">
+                                            {{ ($item->nama_fakultas ?? '') .' - '. ($item->nama_prodi ?? '') }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('kodeprodi_satu')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
                             </div>
 
                             <!-- Field Captcha -->

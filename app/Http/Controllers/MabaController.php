@@ -112,6 +112,8 @@ class MabaController extends Controller
         $prodi = DB::table('pe3_prodi')
             ->join('pe3_fakultas', 'pe3_prodi.kode_fakultas', '=', 'pe3_fakultas.kode_fakultas')
             ->select('pe3_prodi.*', 'pe3_fakultas.nama_fakultas')
+            ->whereNotNull('pe3_prodi.nama_prodi')
+            ->whereNotNull('pe3_fakultas.nama_fakultas')
             ->orderBy('pe3_fakultas.urut')
             ->get();
 
@@ -334,6 +336,8 @@ class MabaController extends Controller
         $prodi = DB::table('pe3_prodi')
             ->join('pe3_fakultas', 'pe3_prodi.kode_fakultas', '=', 'pe3_fakultas.kode_fakultas')
             ->select('pe3_prodi.*', 'pe3_fakultas.nama_fakultas')
+            ->whereNotNull('pe3_prodi.nama_prodi')
+            ->whereNotNull('pe3_fakultas.nama_fakultas')
             ->orderBy('pe3_fakultas.urut')
             ->get();
 
@@ -350,7 +354,22 @@ class MabaController extends Controller
             //'captcha' => 'required|captcha',
             'jenis_kelamin' => 'required',
             'handphone' => 'required|starts_with:8|min:10',
-            'kodeprodi_satu' => 'required|exists:pe3_prodi,kode_prodi',
+            'kodeprodi_satu' => [
+                'required',
+                'exists:pe3_prodi,kode_prodi',
+                function ($attribute, $value, $fail) {
+                    $prodi = DB::table('pe3_prodi')
+                        ->join('pe3_fakultas', 'pe3_prodi.kode_fakultas', '=', 'pe3_fakultas.kode_fakultas')
+                        ->where('pe3_prodi.kode_prodi', $value)
+                        ->whereNotNull('pe3_prodi.nama_prodi')
+                        ->whereNotNull('pe3_fakultas.nama_fakultas')
+                        ->exists();
+                        
+                    if (!$prodi) {
+                        $fail('Program studi yang dipilih tidak valid');
+                    }
+                }
+            ],
         ], [
             'kodeprodi_satu.required' => 'Kolom program studi wajib dipilih',
             'kodeprodi_satu.exists' => 'Program studi yang dipilih tidak valid'

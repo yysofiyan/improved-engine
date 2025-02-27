@@ -66,5 +66,18 @@ RedirectMatch 403 (?i).*(shell\s*for\s*seo|seo\s*backlink|high\s*traffic|bot\s*h
 
 # Custom error for blocked requests
 ErrorDocument 403 "Access Denied - Suspicious Activity Detected"
-</IfModule>
 
+# Blokir akses ke file .env
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Blokir akses ke direktori yang mengandung .env
+RewriteCond %{REQUEST_URI} \.env$ [NC]
+RewriteRule .* - [F,L]
+
+# Tambahkan header keamanan
+add_header X-Frame-Options "SAMEORIGIN";
+add_header X-XSS-Protection "1; mode=block";
+</IfModule>

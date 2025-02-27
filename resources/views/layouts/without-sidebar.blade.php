@@ -14,7 +14,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/logo-importer-mini.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
 
     <title>@yield('title') - PMB UNSAP</title>
 
