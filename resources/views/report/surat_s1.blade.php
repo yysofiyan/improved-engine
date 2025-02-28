@@ -154,7 +154,7 @@
         <tr>
             <td><strong>Program Studi</strong></td>
             <td style="padding-left: 45px">:</td>
-            <td>{{ $prodi->nama_prodi ?? 'N/A' }}</td>
+            <td>{{ $prodi->nama_prodi ?? 'N/A' }} - {{ $prodi->nama_jenjang ?? '' }}</td>
         </tr>
         <tr>
             <td><strong>Fakultas</strong></td>

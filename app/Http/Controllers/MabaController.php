@@ -923,37 +923,6 @@ class MabaController extends Controller
     }
 
 
-    // public function printpdf2()
-	// {
-
-	// 	$formulir = Neomahasiswa::find('03b5d645-5191-4c4a-a2d5-21723cee8060');
-
-    //     $headers=[
-	// 				'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-	// 				'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_pmb.png")
-	// 			];
-    //             //dd($headers);
-	// 	$pdf = \Meneses\LaravelMpdf\Facades\LaravelMpdf::loadView('report.surat',
-	// 																	[
-	// 																		'headers'=>$headers,
-	// 																	],
-	// 																	[],
-	// 																	[
-	// 																		'title' => 'Surat Kelulusan Calon Mahasiswa Baru UNSAP 2025',
-	// 																	]);
-	// 			$file_pdf=AkademikHelpers::public_path("exported/pdf/luluspmb_123.pdf");
-	// 			$pdf->save($file_pdf);
-
-	// 			$pdf_file='public/exported/pdf/luluspmb_123.pdf';
-
-	// 			return Response()->json([
-	// 									'status'=>1,
-	// 									'pid'=>'fetchdata',
-	// 									'formulir'=>$formulir,
-	// 									'pdf_file'=>$pdf_file
-	// 								], 200);
-	// }
-
     public function printpdf($id)
     {
         try {

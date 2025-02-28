@@ -150,7 +150,7 @@ ini_set('memory_limit', '256M');
             <tr>
                 <td><strong>Program Studi</strong></td>
                 <td style="padding-left: 60px">:</td>
-                <td>{{ $prodi->nama_prodi ?? 'Program Studi Tidak Diketahui' }}</td>
+                <td>{{ $prodi->nama_prodi ?? 'Program Studi Tidak Diketahui' }} - {{ $prodi->nama_jenjang ?? '' }}</td>
             </tr>
             <tr>
                 <td><strong>Fakultas</strong></td>
