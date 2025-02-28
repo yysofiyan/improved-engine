@@ -86,21 +86,40 @@ class SoalUjian extends Component
                 'jawaban_murid' => $this->pilih[$a]
             ]);
         }
+        // Ambil data formulir berdasarkan ID session
         $formulir = Neomahasiswa::find(session('id'));
-        $headers=[
-            'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-            'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan.png"),
-            'qrunsap1'=>AkademikHelpers::public_path("images/qrunsap1.png")
+        
+        // Siapkan header untuk PDF dengan path gambar terbaru
+        $headers = [
+            'HEADER_LOGO' => AkademikHelpers::public_path("images/header_pmb2025.png"),
+            'TANDATANGAN' => AkademikHelpers::public_path("images/tanda_tangan2025.png"),
         ];
-        $prodi=DB::table('pe3_prodi')
-        ->where('config','=',$formulir->kodeprodi_satu)
-        ->first();
+
+        // Cari data prodi berdasarkan kode prodi dari formulir
+        $prodi = DB::table('pe3_prodi')
+            ->where('config', $formulir->kodeprodi_satu)
+            ->first();
+
+        // Validasi data prodi
+        if(!$prodi) {
+            throw new Exception('Data prodi tidak ditemukan');
+        }
 
         
 
-        $pdf = Pdf::loadView('report.surat',['headers' => $headers,'formulir'=>$formulir,'prodi'=>$prodi,'tanggal'=>AkademikHelpers::tanggal('d F Y')]);
+        // Menentukan nama view berdasarkan jenjang program studi
+        $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+        
+        // Membuat PDF dengan view yang dipilih dan data yang diperlukan
+        $pdf = Pdf::loadView($viewName, ['headers' => $headers, 'formulir' => $formulir, 'prodi' => $prodi, 'tanggal' => AkademikHelpers::tanggal('d F Y')]);
+        
+        // Mendapatkan konten PDF yang telah di-generate
         $content = $pdf->download()->getOriginalContent();
+        
+        // Menyimpan file PDF ke storage dengan nama berdasarkan nomor pendaftaran
         Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf',$content);
+        
+        // Mengembalikan response JSON bahwa proses berhasil
         return response()->json(['status'=>'200','success'=>'Data Sukses di Simpan']);
     }
 

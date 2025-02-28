@@ -296,9 +296,9 @@ class RekomendasiController extends Controller
 
             $formulir = Neomahasiswa::find($id);
             $headers=[
-                'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb.png"),
-                'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan.png"),
-                'qrunsap1'=>AkademikHelpers::public_path("images/qrunsap1.png")
+                'HEADER_LOGO'=>AkademikHelpers::public_path("images/header_pmb2025.png"),
+                'TANDATANGAN'=>AkademikHelpers::public_path("images/tanda_tangan2025.png"),
+
             ];
             $prodi=DB::table('pe3_prodi')
             ->where('config','=',$formulir->kodeprodi_satu)
@@ -306,7 +306,13 @@ class RekomendasiController extends Controller
 
 
 
-            $pdf = Pdf::loadView('report.surat',['headers' => $headers,'formulir'=>$formulir,'prodi'=>$prodi,'tanggal'=>AkademikHelpers::tanggal('d F Y')]);
+            $viewName = ($prodi->nama_jenjang == 'S-2') ? 'report.surat_s2' : 'report.surat_s1';
+            $pdf = Pdf::loadView($viewName, [
+                'headers' => $headers,
+                'formulir' => $formulir,
+                'prodi' => $prodi,
+                'tanggal' => now()->format('d F Y')
+            ]);
             $content = $pdf->download()->getOriginalContent();
             Storage::put('public/exported/pdf/'.$formulir->nomor_pendaftaran.'.pdf',$content);
                 }else

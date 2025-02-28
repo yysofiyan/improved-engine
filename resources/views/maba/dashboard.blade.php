@@ -40,23 +40,23 @@
                         <ol class="list-group list-group-numbered">
                             <li class="list-group-item border-0 bg-light mb-2 rounded">
                                 Silahkan melakukan pembayaran biaya pendaftaran dan
-                                <span class="badge bg-info">Aktivasi PIN</span> melalui transfer ke:
+                                <span class="badge bg-warning">Aktivasi PIN</span> melalui transfer ke:
                                 <div class="d-flex align-items-center gap-2 mt-2">
-                                    <span class="badge bg-info">Rekening BJB</span>
-                                    <span class="badge bg-info">011.001.001.1941</span>
+                                    <span class="badge bg-warning">Rekening BJB</span>
+                                    <span class="badge bg-warning">011.001.001.1941</span>
                                 </div>
                                 <div class="mt-2">
                                     Atas nama: <strong>Yayasan Pendidikan 11 April</strong>
                                 </div>
                                 <div class="mt-2">
-                                    Sejumlah: <span class="badge bg-info">Rp. 200.000</span>
+                                    Sejumlah: <span class="badge bg-warning">Rp. 200.000</span>
                                 </div>
                             </li>
                             <li class="list-group-item border-0 bg-light mb-2 rounded">Upload Bukti Pembayaran Pada Form
                                 ini</li>
                             <li class="list-group-item border-0 bg-light mb-2 rounded">
                                 Verifikasi pembayaran akan diproses setelah data diterima
-                                <span class="badge bg-info">Maksimal 4 x 24 Jam pada Hari Kerja</span>
+                                <span class="badge bg-warning">Maksimal 4 x 24 Jam pada Hari Kerja</span>
                             </li>
                         </ol>
                     </div>
@@ -611,7 +611,7 @@
 
                                         <div class="row">
                                             <div class="form-group col-lg-6 @error('kode_pt_asal') has-danger @enderror">
-                                                <label class="col-sm-12 "><strong>Asal Perguruan Tinggi <span class="badge badge-info">Untuk Mahasiswa Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)</span></strong></label>
+                                                <label class="col-sm-12 "><strong>Asal Perguruan Tinggi <span class="badge badge-info">Pascasarjana/Pindahan/Lanjutan (Wajib Diisi)</span></strong></label>
                                                 <div class="col-sm-12">
                                                     <input type="text"
                                                         class="form-control @error('kode_pt_asal') form-control-danger @enderror"
