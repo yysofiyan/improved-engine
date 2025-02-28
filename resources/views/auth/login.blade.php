@@ -88,6 +88,13 @@
                                         </div>
                                     @enderror
                                 </div>
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold text-uppercase">Verifikasi Keamanan</label>
+                                    <div style="display: block; flex-flow: row;">
+                                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAA-RoAZoVha2NyLa" data-size="flexible" data-theme="light"></div>
+                                    </div>
+                                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                                </div>
 
                                 <button type="submit" class="btn btn-primary w-100 mb-3">LOGIN</button>
                                 <hr>

@@ -66,10 +66,10 @@
                                 <form action="{{ route('cek.pin') }}" method="POST">
                                     @csrf
                                     <div class="form-group">
-                                        <label class="font-weight-bold text-uppercase">Nomor Whatsapp (+62)</label>
+                                        <label class="font-weight-bold text-uppercase">Nomor Whatsapp (Tanpa Awalan +62 atau 0)</label>
                                         <input type="handphone" name="handphone" value="{{ old('handphone') }}"
                                             class="form-control @error('handphone') is-invalid @enderror"
-                                            placeholder="Masukkan Nomor Whatsapp">
+                                            placeholder="Contoh. 81394543943" required>
                                         @error('handphone')
                                             <div class="alert alert-danger mt-2">
                                                 {{ $message }}
@@ -87,8 +87,17 @@
                                             </div>
                                         @enderror
                                     </div>
+                                    <!-- Field Turnstile Cloudflare -->
+                                    <div class="form-group">
+                                        <label class="font-weight-bold text-uppercase">Verifikasi Keamanan</label>
+                                        <div style="display: block; flex-flow: row;">
+                                            <div class="cf-turnstile" data-sitekey="0x4AAAAAAA-RoAZoVha2NyLa" data-size="flexible" data-theme="light"></div>
+                                        </div>
+                                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                                    </div>
                                     <button type="submit" class="btn btn-primary">LOGIN</button>
                                     <hr>
+
 
 
                                 </form>
